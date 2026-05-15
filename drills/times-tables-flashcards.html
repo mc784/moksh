@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Times Tables Flashcards</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+h1 { margin-bottom: 10px; font-size: 1.8em; color: #ffd700; }
+.subtitle { color: #aaa; margin-bottom: 20px; font-size: 0.9em; }
+
+.priority-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center; max-width: 700px; }
+.priority-selector label { background: #16213e; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid #0f3460; font-size: 0.85em; }
+.priority-selector label:hover { border-color: #ffd700; }
+.priority-selector input:checked + span { color: #ffd700; font-weight: bold; }
+.priority-selector input { margin-right: 6px; }
+
+.controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+button { background: #0f3460; color: #eee; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.2s; }
+button:hover { background: #1a5276; transform: scale(1.05); }
+button.primary { background: #e94560; }
+button.primary:hover { background: #ff6b6b; }
+button.success { background: #2d6a4f; }
+button.success:hover { background: #40916c; }
+button.exit { background: #555; font-size: 0.85em; padding: 8px 16px; }
+button.exit:hover { background: #777; }
+
+.card-container { perspective: 1000px; margin: 20px 0; }
+.card { width: 320px; height: 200px; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
+.card.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.card-front { background: linear-gradient(135deg, #16213e, #0f3460); border: 3px solid #e94560; }
+.card-back { background: linear-gradient(135deg, #1b4332, #2d6a4f); border: 3px solid #40916c; transform: rotateY(180deg); }
+.card-hint { font-size: 0.4em; color: #aaa; margin-top: 10px; font-weight: normal; }
+
+.progress-bar { width: 320px; height: 8px; background: #16213e; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #e94560, #ffd700); transition: width 0.3s; border-radius: 4px; }
+.stats { display: flex; gap: 20px; margin: 10px 0; font-size: 0.9em; color: #aaa; flex-wrap: wrap; align-items: center; }
+.stats span { display: flex; align-items: center; gap: 5px; }
+.dot-correct { width: 10px; height: 10px; background: #40916c; border-radius: 50%; }
+.dot-wrong { width: 10px; height: 10px; background: #e94560; border-radius: 50%; }
+.dot-remaining { width: 10px; height: 10px; background: #555; border-radius: 50%; }
+
+.results { text-align: center; max-width: 400px; }
+.results h2 { color: #ffd700; margin-bottom: 15px; }
+.results .score { font-size: 3em; margin: 10px 0; }
+.results .missed-list { text-align: left; margin: 15px 0; padding: 15px; background: #16213e; border-radius: 8px; }
+.results .missed-list h3 { color: #e94560; margin-bottom: 8px; font-size: 0.9em; }
+.results .missed-list p { margin: 4px 0; font-size: 0.9em; }
+.timer { font-size: 1.2em; color: #ffd700; margin: 5px 0; }
+
+.input-mode { display: flex; gap: 10px; align-items: center; margin: 15px 0; }
+.input-mode input { width: 100px; padding: 10px; font-size: 1.5em; text-align: center; border-radius: 8px; border: 2px solid #0f3460; background: #16213e; color: #ffd700; outline: none; }
+.input-mode input:focus { border-color: #ffd700; }
+
+.mode-toggle { margin-bottom: 15px; font-size: 0.85em; color: #aaa; }
+.mode-toggle label { cursor: pointer; display: block; margin: 4px 0; }
+.mode-toggle input { margin-right: 5px; }
+
+.hidden { display: none; }
+
+.voice-status { text-align: center; margin: 15px 0; font-size: 1.1em; color: #aaa; }
+.audio-toggles { margin-left: auto; }
+.audio-toggles label { cursor: pointer; font-size: 1.1em; margin-left: 6px; opacity: 0.5; }
+.audio-toggles input { display: none; }
+.audio-toggles label:has(input:checked) { opacity: 1; }
+.mic-icon { font-size: 2.5em; animation: pulse 1.5s infinite; }
+.mic-icon.correct { animation: none; color: #40916c; }
+.mic-icon.wrong { animation: none; color: #e94560; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.voice-feedback { font-size: 1.3em; margin-top: 8px; font-weight: bold; }
+.voice-feedback.correct { color: #40916c; }
+.voice-feedback.wrong { color: #e94560; }
+
+.drill-header { display: flex; align-items: center; width: 320px; justify-content: space-between; }
+.drill-title { color: #ffd700; font-size: 0.85em; text-align: center; max-width: 180px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<h1>⚡ Times Tables Drill</h1>
+<p class="subtitle">Tap card to reveal answer • Track your progress</p>
+
+<div id="setup">
+  <div class="priority-selector">
+    <label><input type="checkbox" value="p1" checked><span>P1: 6,7,8,9 × 6,7,8,9</span></label>
+    <label><input type="checkbox" value="p2"><span>P2: 12,13,14,15,16 × 6,7,8,9</span></label>
+    <label><input type="checkbox" value="p3"><span>P3: 17,18,19,20 × 2–9</span></label>
+    <label><input type="checkbox" value="p4"><span>P4: Classic Hard (3–12 × 3–12)</span></label>
+  </div>
+
+  <div class="mode-toggle">
+    <label><input type="checkbox" id="typeMode"> Type-answer mode (harder)</label>
+    <label><input type="checkbox" id="audioMode" checked> 🔊 Read questions aloud</label>
+    <label><input type="checkbox" id="voiceMode"> 🎤 Voice-answer mode (speak your answer)</label>
+  </div>
+
+  <div class="controls">
+    <button class="primary" onclick="startDrill()">Start Drill</button>
+  </div>
+</div>
+
+<div id="drill" class="hidden">
+  <div class="drill-header">
+    <button class="exit" onclick="exitDrill()">✕ Exit</button>
+    <div class="drill-title" id="drillTitle"></div>
+    <span class="audio-toggles">
+      <label title="Read aloud"><input type="checkbox" id="audioToggle" checked onchange="toggleAudio()"> 🔊</label>
+      <label title="Voice input"><input type="checkbox" id="voiceToggle" onchange="toggleVoice()"> 🎤</label>
+    </span>
+  </div>
+  <div class="stats">
+    <span><div class="dot-correct"></div> <span id="correctCount">0</span></span>
+    <span><div class="dot-wrong"></div> <span id="wrongCount">0</span></span>
+    <span><div class="dot-remaining"></div> <span id="remainingCount">0</span></span>
+    <span class="timer" id="timer">0:00</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="card-container">
+    <div class="card" id="card" onclick="flipCard()">
+      <div class="card-face card-front">
+        <span id="question">6 × 8</span>
+        <span class="card-hint" id="hint"></span>
+      </div>
+      <div class="card-face card-back">
+        <span id="answer">48</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-mode hidden" id="inputArea">
+    <input type="number" id="userAnswer" placeholder="?" autofocus>
+    <button onclick="checkTypedAnswer()">Check</button>
+  </div>
+
+  <div class="voice-status hidden" id="voiceStatus">
+    <div class="mic-icon" id="micIcon">🎤</div>
+    <span id="voiceText">Listening...</span>
+  </div>
+
+  <div class="controls" id="cardControls">
+    <button class="success" onclick="markCorrect()">✓ Got it</button>
+    <button class="primary" onclick="markWrong()">✗ Missed</button>
+  </div>
+</div>
+
+<div id="results" class="hidden results">
+  <h2>Session Complete!</h2>
+  <div class="score" id="finalScore"></div>
+  <p id="finalTime"></p>
+  <div class="missed-list hidden" id="missedList">
+    <h3>🔁 Review these:</h3>
+    <div id="missedFacts"></div>
+  </div>
+  <br>
+  <div class="controls">
+    <button onclick="retryMissed()">Retry Missed</button>
+    <button class="primary" onclick="resetAll()">New Drill</button>
+  </div>
+</div>
+
+<script>
+const facts = {
+  // P1: 6,7,8,9 × 6,7,8,9
+  p1: [
+    [6,6,36],[6,7,42],[6,8,48],[6,9,54],
+    [7,7,49],[7,8,56],[7,9,63],
+    [8,8,64],[8,9,72],
+    [9,9,81]
+  ],
+  // P2: 12,13,14,15,16 × 6,7,8,9
+  p2: [
+    [12,6,72],[12,7,84],[12,8,96],[12,9,108],
+    [13,6,78],[13,7,91],[13,8,104],[13,9,117],
+    [14,6,84],[14,7,98],[14,8,112],[14,9,126],
+    [15,6,90],[15,7,105],[15,8,120],[15,9,135],
+    [16,6,96],[16,7,112],[16,8,128],[16,9,144]
+  ],
+  // P3: 17,18,19,20 × 2,3,4,5,6,7,8,9
+  p3: [
+    [17,2,34],[17,3,51],[17,4,68],[17,5,85],[17,6,102],[17,7,119],[17,8,136],[17,9,153],
+    [18,2,36],[18,3,54],[18,4,72],[18,5,90],[18,6,108],[18,7,126],[18,8,144],[18,9,162],
+    [19,2,38],[19,3,57],[19,4,76],[19,5,95],[19,6,114],[19,7,133],[19,8,152],[19,9,171],
+    [20,2,40],[20,3,60],[20,4,80],[20,5,100],[20,6,120],[20,7,140],[20,8,160],[20,9,180]
+  ],
+  // P4: Classic Hard (3,4,6,7,8,9,11,12 × 3,4,6,7,8,9,11,12)
+  p4: [
+    [3,6,18],[3,7,21],[3,8,24],[3,9,27],
+    [4,6,24],[4,7,28],[4,8,32],[4,9,36],
+    [6,7,42],[6,8,48],[6,9,54],
+    [7,8,56],[7,9,63],
+    [8,9,72],
+    [11,7,77],[11,8,88],[11,9,99],
+    [12,7,84],[12,8,96],[12,9,108],[12,11,132],[12,12,144]
+  ]
+};
+
+let deck = [], current = 0, correct = 0, wrong = 0, missed = [];
+let timerInterval, startTime, isTypeMode = false, isVoiceMode = false;
+let recognition = null;
+
+function initSpeechRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Speech recognition not supported in this browser. Use Chrome.'); return false; }
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+  recognition.onresult = handleVoiceResult;
+  recognition.onerror = (e) => { if (e.error !== 'aborted') startListening(); };
+  recognition.onend = () => {};
+  return true;
+}
+
+function startListening() {
+  if (!isVoiceMode || current >= deck.length) return;
+  try {
+    document.getElementById('micIcon').className = 'mic-icon';
+    document.getElementById('micIcon').textContent = '🎤';
+    document.getElementById('voiceText').textContent = 'Listening...';
+    recognition.start();
+  } catch(e) {}
+}
+
+function handleVoiceResult(event) {
+  const transcript = event.results[0][0].transcript.trim().toLowerCase();
+  const num = parseSpokenNumber(transcript);
+  const correctAns = deck[current][2];
+  const [a, b] = deck[current];
+
+  document.getElementById('card').classList.add('flipped');
+
+  if (num === correctAns) {
+    document.getElementById('micIcon').textContent = '✓';
+    document.getElementById('micIcon').className = 'mic-icon correct';
+    document.getElementById('voiceText').innerHTML = `<span class="voice-feedback correct">"${transcript}" — Correct!</span>`;
+    speak(`Yes! ${a} times ${b} equals ${correctAns}`);
+    setTimeout(markCorrect, 1500);
+  } else {
+    document.getElementById('micIcon').textContent = '✗';
+    document.getElementById('micIcon').className = 'mic-icon wrong';
+    document.getElementById('voiceText').innerHTML = `<span class="voice-feedback wrong">"${transcript}" — It's ${correctAns}</span>`;
+    speak(`No, ${a} times ${b} equals ${correctAns}`);
+    setTimeout(markWrong, 2200);
+  }
+}
+
+function parseSpokenNumber(text) {
+  const digits = text.replace(/[^0-9]/g, '');
+  if (digits) return parseInt(digits);
+  const words = {
+    zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,
+    eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,
+    eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,
+    eighty:80,ninety:90,hundred:100,thousand:1000
+  };
+  let total = 0, curr = 0;
+  text.split(/[\s-]+/).forEach(w => {
+    if (words[w] !== undefined) {
+      if (w === 'hundred') curr *= 100;
+      else if (w === 'thousand') { curr *= 1000; total += curr; curr = 0; }
+      else curr += words[w];
+    }
+  });
+  total += curr;
+  return total || null;
+}
+
+function speak(text) {
+  if (!document.getElementById('audioToggle').checked) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  u.pitch = 1.1;
+  window.speechSynthesis.speak(u);
+}
+
+function toggleAudio() {
+  if (!document.getElementById('audioToggle').checked) window.speechSynthesis.cancel();
+}
+
+function toggleVoice() {
+  isVoiceMode = document.getElementById('voiceToggle').checked;
+  if (isVoiceMode) {
+    if (!recognition && !initSpeechRecognition()) { isVoiceMode = false; document.getElementById('voiceToggle').checked = false; return; }
+    document.getElementById('voiceStatus').classList.remove('hidden');
+    document.getElementById('cardControls').classList.add('hidden');
+    document.getElementById('inputArea').classList.add('hidden');
+    startListening();
+  } else {
+    if (recognition) try { recognition.abort(); } catch(e) {}
+    document.getElementById('voiceStatus').classList.add('hidden');
+    if (isTypeMode) document.getElementById('inputArea').classList.remove('hidden');
+    else document.getElementById('cardControls').classList.remove('hidden');
+  }
+}
+
+function speakQuestion(a, b) { speak(`What is ${a} times ${b}?`); }
+function speakAnswer(a, b, ans) { speak(`${a} times ${b} equals ${ans}`); }
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startDrill() {
+  deck = [];
+  const checks = document.querySelectorAll('.priority-selector input:checked');
+  const titles = [];
+  checks.forEach(c => {
+    deck = deck.concat(facts[c.value]);
+    titles.push(c.value.toUpperCase());
+  });
+  if (!deck.length) { alert('Select at least one priority group!'); return; }
+  document.getElementById('drillTitle').textContent = titles.join(' + ');
+  shuffle(deck);
+  current = 0; correct = 0; wrong = 0; missed = [];
+  isTypeMode = document.getElementById('typeMode').checked;
+  isVoiceMode = document.getElementById('voiceMode').checked;
+
+  if (isVoiceMode && !recognition) {
+    if (!initSpeechRecognition()) isVoiceMode = false;
+  }
+
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('drill').classList.remove('hidden');
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('audioToggle').checked = document.getElementById('audioMode').checked;
+  document.getElementById('voiceToggle').checked = isVoiceMode;
+
+  if (isTypeMode && !isVoiceMode) {
+    document.getElementById('inputArea').classList.remove('hidden');
+    document.getElementById('cardControls').classList.add('hidden');
+    document.getElementById('voiceStatus').classList.add('hidden');
+  } else if (isVoiceMode) {
+    document.getElementById('inputArea').classList.add('hidden');
+    document.getElementById('cardControls').classList.add('hidden');
+    document.getElementById('voiceStatus').classList.remove('hidden');
+  } else {
+    document.getElementById('inputArea').classList.add('hidden');
+    document.getElementById('cardControls').classList.remove('hidden');
+    document.getElementById('voiceStatus').classList.add('hidden');
+  }
+
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  document.getElementById('correctCount').textContent = 0;
+  document.getElementById('wrongCount').textContent = 0;
+  showCard();
+}
+
+function exitDrill() {
+  clearInterval(timerInterval);
+  if (recognition) try { recognition.abort(); } catch(e) {}
+  window.speechSynthesis.cancel();
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+  document.getElementById('drillTitle').textContent = '';
+}
+
+function updateTimer() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('timer').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+function showCard() {
+  if (current >= deck.length) { endDrill(); return; }
+  const card = document.getElementById('card');
+  card.style.visibility = 'hidden';
+  card.style.transition = 'none';
+  card.classList.remove('flipped');
+  const [a, b] = deck[current];
+  document.getElementById('question').textContent = `${a} × ${b}`;
+  document.getElementById('answer').textContent = deck[current][2];
+  document.getElementById('hint').textContent = `(${current+1} of ${deck.length})`;
+  document.getElementById('remainingCount').textContent = deck.length - current;
+  document.getElementById('progressFill').style.width = `${(current/deck.length)*100}%`;
+  void card.offsetHeight;
+  card.style.transition = '';
+  card.style.visibility = '';
+  if (isTypeMode && !isVoiceMode) {
+    const inp = document.getElementById('userAnswer');
+    inp.value = '';
+    inp.focus();
+  }
+  speakQuestion(a, b);
+  if (isVoiceMode) setTimeout(startListening, 1800);
+}
+
+function flipCard() {
+  if (!isTypeMode && !isVoiceMode) {
+    const card = document.getElementById('card');
+    card.classList.toggle('flipped');
+    if (card.classList.contains('flipped')) {
+      const [a, b, ans] = deck[current];
+      speakAnswer(a, b, ans);
+    }
+  }
+}
+
+function checkTypedAnswer() {
+  const ans = parseInt(document.getElementById('userAnswer').value);
+  const correctAns = deck[current][2];
+  document.getElementById('card').classList.add('flipped');
+  if (ans === correctAns) setTimeout(markCorrect, 600);
+  else setTimeout(markWrong, 1200);
+}
+
+function markCorrect() {
+  correct++;
+  document.getElementById('correctCount').textContent = correct;
+  current++;
+  showCard();
+}
+
+function markWrong() {
+  wrong++;
+  missed.push(deck[current]);
+  document.getElementById('wrongCount').textContent = wrong;
+  current++;
+  showCard();
+}
+
+function endDrill() {
+  clearInterval(timerInterval);
+  if (recognition) try { recognition.abort(); } catch(e) {}
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  const pct = deck.length ? Math.round((correct/deck.length)*100) : 0;
+  document.getElementById('finalScore').textContent = `${pct}%`;
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('finalTime').textContent = `${correct}/${deck.length} correct in ${Math.floor(s/60)}m ${s%60}s`;
+  if (missed.length) {
+    document.getElementById('missedList').classList.remove('hidden');
+    document.getElementById('missedFacts').innerHTML = missed.map(([a,b,c]) => `<p>${a} × ${b} = <strong>${c}</strong></p>`).join('');
+  } else {
+    document.getElementById('missedList').classList.add('hidden');
+  }
+}
+
+function retryMissed() {
+  if (!missed.length) { resetAll(); return; }
+  deck = shuffle([...missed]);
+  current = 0; correct = 0; wrong = 0; missed = [];
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('drill').classList.remove('hidden');
+  document.getElementById('correctCount').textContent = 0;
+  document.getElementById('wrongCount').textContent = 0;
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  showCard();
+}
+
+function resetAll() {
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('drill').classList.contains('hidden')) return;
+  if (e.key === 'Escape') { exitDrill(); return; }
+  if (isTypeMode && !isVoiceMode) { if (e.key === 'Enter') checkTypedAnswer(); return; }
+  if (isVoiceMode) return;
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+  if (e.key === 'ArrowRight' || e.key === 'y') markCorrect();
+  if (e.key === 'ArrowLeft' || e.key === 'n') markWrong();
+});
+</script>
+</body>
+</html>

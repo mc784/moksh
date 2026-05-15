@@ -95,6 +95,28 @@
     .add-card .kid-name {
       color: white;
     }
+
+    .section-title {
+      color: rgba(255,255,255,0.8);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .drill-card {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .drill-card .kid-name {
+      color: #ffd700;
+    }
+
+    .drill-card .kid-grade {
+      color: rgba(255,255,255,0.7);
+    }
   </style>
 </head>
 <body>
@@ -113,6 +135,22 @@
       <a href="#" class="kid-card add-card" onclick="alert('Coming soon!'); return false;">
         <div class="kid-avatar">➕</div>
         <div class="kid-name">Add Child</div>
+      </a>
+    </div>
+
+    <p class="section-title">Practice Drills</p>
+
+    <div class="kids-grid">
+      <a href="drills/times-tables-flashcards.html" class="kid-card drill-card">
+        <div class="kid-avatar">⚡</div>
+        <div class="kid-name">Times Tables</div>
+        <div class="kid-grade">Math Drills</div>
+      </a>
+
+      <a href="drills/science-flashcards.html" class="kid-card drill-card">
+        <div class="kid-avatar">🔬</div>
+        <div class="kid-name">Science Facts</div>
+        <div class="kid-grade">200 Facts</div>
       </a>
     </div>
   </div>

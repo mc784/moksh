@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Flashcards — 200 Lifelong Facts</title>
+<style>
+:root {
+  --bg: #0f0e17; --surface: #1a1932; --card: #232246;
+  --accent: #00e8a2; --accent2: #7f5af0; --warn: #ff6b6b;
+  --text: #fffffe; --muted: #94a1b2;
+  --physics: #60a5fa; --chemistry: #f59e0b; --biology: #34d399;
+  --geography: #fb923c; --space: #a78bfa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+
+h1 { font-size: 2em; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+.subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.9em; }
+
+/* Category selector */
+.categories { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; justify-content: center; max-width: 600px; }
+.cat-btn { display: flex; align-items: center; gap: 8px; background: var(--surface); padding: 12px 18px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; font-size: 0.9em; }
+.cat-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cat-btn input { width: 16px; height: 16px; accent-color: var(--accent); }
+.cat-btn input:checked ~ span { font-weight: 600; }
+.cat-btn[data-cat="physics"] input:checked ~ span { color: var(--physics); }
+.cat-btn[data-cat="chemistry"] input:checked ~ span { color: var(--chemistry); }
+.cat-btn[data-cat="biology"] input:checked ~ span { color: var(--biology); }
+.cat-btn[data-cat="geography"] input:checked ~ span { color: var(--geography); }
+.cat-btn[data-cat="space"] input:checked ~ span { color: var(--space); }
+
+.options { margin-bottom: 20px; color: var(--muted); font-size: 0.85em; }
+.options label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.options input { accent-color: var(--accent); }
+
+button { background: var(--accent2); color: #fff; border: none; padding: 14px 32px; border-radius: 12px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.2s; }
+button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(127,90,240,0.3); }
+button.success { background: #059669; }
+button.danger { background: var(--warn); }
+button.ghost { background: transparent; border: 1px solid var(--muted); color: var(--muted); padding: 10px 20px; font-size: 0.85em; }
+button.ghost:hover { border-color: var(--text); color: var(--text); box-shadow: none; }
+
+/* Drill view */
+.drill-bar { display: flex; align-items: center; width: 100%; max-width: 380px; justify-content: space-between; margin-bottom: 8px; }
+.drill-bar .timer { color: var(--accent); font-weight: 600; font-size: 1.1em; }
+.drill-bar .cat-tag { font-size: 0.75em; padding: 4px 10px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.progress-wrap { width: 100%; max-width: 380px; margin-bottom: 6px; }
+.progress-bar { width: 100%; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.3s; border-radius: 3px; }
+.stats { display: flex; gap: 16px; font-size: 0.85em; color: var(--muted); margin-bottom: 12px; }
+.stats .correct { color: #34d399; }
+.stats .wrong { color: var(--warn); }
+
+/* Card */
+.card-container { perspective: 1200px; margin: 16px 0; }
+.card { width: 360px; height: 240px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.card.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; }
+.card-front { background: linear-gradient(145deg, var(--card), var(--surface)); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); }
+.card-front .q-text { font-size: 1.2em; font-weight: 600; line-height: 1.4; }
+.card-front .card-num { position: absolute; bottom: 14px; right: 18px; font-size: 0.7em; color: var(--muted); }
+.card-back { background: linear-gradient(145deg, #1b3a2a, #162e23); border: 1px solid rgba(52,211,153,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.4); transform: rotateY(180deg); }
+.card-back .a-text { font-size: 1.1em; line-height: 1.5; color: #d1fae5; }
+
+.actions { display: flex; gap: 12px; margin-top: 16px; }
+.actions button { padding: 14px 28px; border-radius: 12px; font-size: 1em; }
+
+/* Results */
+.results { text-align: center; max-width: 420px; }
+.results h2 { font-size: 1.6em; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+.results .score { font-size: 3.5em; font-weight: 700; margin: 8px 0; }
+.results .time-text { color: var(--muted); margin-bottom: 16px; }
+.missed-box { text-align: left; margin: 16px 0; padding: 16px; background: var(--surface); border-radius: 12px; max-height: 280px; overflow-y: auto; }
+.missed-box h3 { color: var(--warn); font-size: 0.85em; margin-bottom: 10px; }
+.missed-box .item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85em; }
+.missed-box .item strong { color: var(--text); }
+.missed-box .item .ans { color: var(--accent); margin-top: 3px; }
+
+.hidden { display: none; }
+
+@media (max-width: 400px) {
+  .card { width: 92vw; height: 220px; }
+  .drill-bar, .progress-wrap { width: 92vw; }
+}
+</style>
+</head>
+<body>
+
+<h1>🔬 Science Flashcards</h1>
+<p class="subtitle">200 lifelong facts · tap to flip · swipe through knowledge</p>
+
+<div id="setup">
+  <div class="categories">
+    <label class="cat-btn" data-cat="physics"><input type="checkbox" value="physics" checked><span>⚡ Physics (40)</span></label>
+    <label class="cat-btn" data-cat="chemistry"><input type="checkbox" value="chemistry" checked><span>🧪 Chemistry (40)</span></label>
+    <label class="cat-btn" data-cat="biology"><input type="checkbox" value="biology" checked><span>🌿 Biology (40)</span></label>
+    <label class="cat-btn" data-cat="geography"><input type="checkbox" value="geography" checked><span>🌍 Geography (40)</span></label>
+    <label class="cat-btn" data-cat="space"><input type="checkbox" value="space" checked><span>🚀 Space (40)</span></label>
+  </div>
+  <div class="options">
+    <label><input type="checkbox" id="audioMode" checked> 🔊 Read aloud</label>
+  </div>
+  <button onclick="startDrill()">Start Drill</button>
+</div>
+
+<div id="drill" class="hidden">
+  <div class="drill-bar">
+    <button class="ghost" onclick="exitDrill()">✕ Exit</button>
+    <span class="cat-tag" id="catTag"></span>
+    <span class="timer" id="timer">0:00</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="stats">
+    <span class="correct">✓ <span id="correctCount">0</span></span>
+    <span class="wrong">✗ <span id="wrongCount">0</span></span>
+    <span><span id="remainingCount">0</span> left</span>
+  </div>
+
+  <div class="card-container">
+    <div class="card" id="card" onclick="flipCard()">
+      <div class="card-face card-front">
+        <div class="q-text" id="question"></div>
+        <div class="card-num" id="hint"></div>
+      </div>
+      <div class="card-face card-back">
+        <div class="a-text" id="answer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="success" onclick="markCorrect()">✓ Knew it</button>
+    <button class="danger" onclick="markWrong()">✗ Learn</button>
+  </div>
+</div>
+
+<div id="results" class="hidden results">
+  <h2>Session Complete!</h2>
+  <div class="score" id="finalScore"></div>
+  <p class="time-text" id="finalTime"></p>
+  <div class="missed-box hidden" id="missedList">
+    <h3>📖 Review these:</h3>
+    <div id="missedFacts"></div>
+  </div>
+  <div class="actions" style="justify-content:center; margin-top:20px;">
+    <button onclick="retryMissed()">Retry Missed</button>
+    <button class="ghost" onclick="resetAll()">New Drill</button>
+  </div>
+</div>
+
+<script>
+const facts = {
+physics: [
+["What are the 3 common states of matter?","Solid, Liquid, Gas"],
+["What is the speed of light?","300,000 km/s (fastest thing in the universe)"],
+["What is gravity?","A force pulling objects toward each other — keeps us on Earth"],
+["What is the unit of force?","Newton (N)"],
+["What is friction?","A force that slows objects when surfaces rub together"],
+["What are the 3 ways heat transfers?","Conduction (touch), Convection (flow), Radiation (waves)"],
+["What is the speed of sound in air?","About 343 m/s — much slower than light"],
+["What is an electrical circuit?","A complete loop that allows electricity to flow"],
+["What are conductors vs insulators?","Conductors carry electricity (metals); Insulators block it (rubber, wood)"],
+["What is energy?","The ability to do work — it can change form but never be created or destroyed"],
+["What are the 7 colours of visible light?","Red, Orange, Yellow, Green, Blue, Indigo, Violet (ROYGBIV)"],
+["What is the rule about magnetic poles?","Opposites attract, same poles repel"],
+["What is the boiling point of water?","100°C (212°F) at sea level"],
+["What is the freezing point of water?","0°C (32°F)"],
+["What is Newton's First Law (inertia)?","An object stays still or keeps moving unless a force acts on it"],
+["What is Newton's Third Law?","Every action has an equal and opposite reaction"],
+["What is density?","Mass divided by volume — how tightly packed matter is"],
+["Why do things float?","They are less dense than the liquid they're in"],
+["What is a lever?","A bar on a pivot (fulcrum) — a simple machine for lifting"],
+["What is the difference between mass and weight?","Mass = amount of matter (same everywhere); Weight = gravity's pull (changes by planet)"],
+["What is kinetic energy?","Energy of movement — faster or heavier = more kinetic energy"],
+["What is potential energy?","Stored energy — due to position, stretch, or chemical bonds"],
+["What is a vacuum?","A space with no matter in it — sound can't travel through it"],
+["What is frequency?","How many waves pass a point per second — measured in Hertz (Hz)"],
+["What is static electricity?","Build-up of electric charge on a surface (e.g. balloon on hair)"],
+["What is voltage?","The 'push' that drives electricity through a circuit — measured in Volts"],
+["What is reflection?","Light bouncing off a surface (mirrors)"],
+["What is refraction?","Light bending when it passes from one material to another (straw in water looks bent)"],
+["What is acceleration?","The rate of change of speed — speeding up or slowing down"],
+["What is terminal velocity?","Maximum falling speed when air resistance equals gravity"],
+["What is a prism?","A glass shape that splits white light into the rainbow spectrum"],
+["What is renewable energy?","Energy from sources that won't run out: solar, wind, hydro, geothermal"],
+["What is a fossil fuel?","Coal, oil, gas — formed from ancient dead organisms over millions of years"],
+["What is an echo?","Sound reflecting off a surface back to you"],
+["What is the unit of electrical resistance?","Ohm (Ω)"],
+["What is pressure?","Force spread over an area (Force ÷ Area) — measured in Pascals"],
+["What is a pulley?","A wheel with a rope — a simple machine that changes direction of force"],
+["What is wavelength?","The distance between two wave peaks"],
+["What is absolute zero?","−273.15°C — the coldest possible temperature, all particle motion stops"],
+["What is the electromagnetic spectrum?","All types of light/radiation: radio, microwave, infrared, visible, UV, X-ray, gamma"]
+],
+chemistry: [
+["What is an atom?","The smallest unit of an element — everything is made of atoms"],
+["What are the 3 parts of an atom?","Protons (+) and Neutrons (neutral) in the nucleus; Electrons (−) orbit outside"],
+["What is the chemical formula for water?","H₂O — 2 hydrogen atoms + 1 oxygen atom"],
+["What is the formula for carbon dioxide?","CO₂ — 1 carbon + 2 oxygen"],
+["What gas do we breathe in?","Oxygen (O₂) — about 21% of air"],
+["What gas do we breathe out?","Carbon dioxide (CO₂)"],
+["What is the most abundant gas in air?","Nitrogen — 78% of Earth's atmosphere"],
+["What is the pH scale?","Measures acidity: 0–6 acid, 7 neutral, 8–14 alkaline/base"],
+["What is a chemical reaction?","When substances rearrange their atoms to form new substances"],
+["What is the periodic table?","A chart of all known elements organized by atomic number and properties"],
+["What is the lightest element?","Hydrogen (H) — atomic number 1"],
+["What is the most abundant element in the universe?","Hydrogen (about 75% of all matter)"],
+["What is photosynthesis (equation)?","CO₂ + H₂O + sunlight → glucose + O₂"],
+["What is an element vs a compound?","Element = one type of atom; Compound = two or more elements chemically bonded"],
+["What is oxygen's symbol?","O (atomic number 8)"],
+["What is iron's symbol and why?","Fe — from Latin 'ferrum'"],
+["What is gold's symbol and why?","Au — from Latin 'aurum'"],
+["What happens when acid meets base?","Neutralization: they make water + a salt"],
+["What is rust?","Iron oxide — formed when iron reacts with oxygen and water"],
+["What is evaporation?","Liquid turning to gas at the surface (below boiling point)"],
+["What is a mixture vs a compound?","Mixture: parts separable physically; Compound: needs chemical reaction to separate"],
+["What is an indicator?","A substance that changes colour to show if something is acid or base (e.g. litmus paper)"],
+["What is combustion?","Burning — a substance reacts with oxygen, releasing heat and light"],
+["What is the formula for table salt?","NaCl — sodium chloride"],
+["What is distillation?","Separating a mixture by boiling and condensing — uses different boiling points"],
+["What is an alloy?","A mixture of metals (e.g. steel = iron + carbon; bronze = copper + tin)"],
+["What is the difference between physical and chemical change?","Physical: reversible, no new substance (ice melting); Chemical: new substance formed (burning)"],
+["What are the noble gases?","Helium, Neon, Argon, Krypton, Xenon, Radon — very unreactive"],
+["What is an acid? Give examples.","A substance with pH below 7 — vinegar, lemon juice, stomach acid"],
+["What is a base/alkali? Give examples.","A substance with pH above 7 — soap, baking soda, bleach"],
+["What is dissolving?","A solid (solute) mixing completely into a liquid (solvent) to form a solution"],
+["What is saturation?","When no more solute can dissolve in a solvent at that temperature"],
+["What is condensation?","Gas turning back into liquid (water droplets on cold glass)"],
+["What is sublimation?","Solid turning directly into gas without becoming liquid (dry ice)"],
+["What is the atomic number?","The number of protons in an atom — defines which element it is"],
+["What are the first 10 elements in order?","H, He, Li, Be, B, C, N, O, F, Ne"],
+["What is carbon dioxide used for?","Plants use it for photosynthesis; it's in fizzy drinks; fire extinguishers"],
+["What is a catalyst?","A substance that speeds up a reaction without being used up itself"],
+["What is fermentation?","Sugar broken down by yeast/bacteria without oxygen → alcohol + CO₂"],
+["What is the law of conservation of mass?","In a chemical reaction, total mass of reactants = total mass of products"]
+],
+biology: [
+["What is the basic unit of all living things?","The cell"],
+["What do plant cells have that animal cells don't?","Cell wall, chloroplasts (for photosynthesis), large vacuole"],
+["What do plants need for photosynthesis?","Sunlight, water, and carbon dioxide"],
+["What do plants produce in photosynthesis?","Glucose (food/energy) and oxygen"],
+["What is DNA?","A molecule carrying genetic instructions — shaped like a double helix"],
+["What are the 5 kingdoms of life?","Animals, Plants, Fungi, Protists, Bacteria"],
+["What is the largest organ in the human body?","The skin"],
+["How many bones does an adult human have?","206"],
+["What does the heart do?","Pumps blood around the body through arteries and veins"],
+["What do the lungs do?","Take in oxygen, release carbon dioxide (gas exchange)"],
+["What carries oxygen in blood?","Red blood cells (using haemoglobin)"],
+["What are the 5 senses?","Sight, hearing, smell, taste, touch"],
+["What is a habitat?","The natural environment where an organism lives"],
+["What is a food chain?","A sequence showing energy flow: producer → consumer → predator"],
+["What is the difference between vertebrates and invertebrates?","Vertebrates have a backbone; invertebrates don't"],
+["What are mammals?","Warm-blooded, have hair/fur, feed babies milk, live birth (mostly)"],
+["What is evolution?","Species changing over generations through natural selection"],
+["What is the function of roots?","Absorb water and minerals; anchor the plant in soil"],
+["What are the main parts of a flower?","Petals, sepals, stamen (male/pollen), pistil/carpel (female/ovule)"],
+["What is the largest animal ever?","Blue whale — up to 30m long, 150 tonnes"],
+["What is the difference between bacteria and viruses?","Bacteria are living single cells; viruses need a host cell to reproduce"],
+["What is respiration?","Cells breaking down glucose with oxygen to release energy (opposite of photosynthesis)"],
+["What is the function of white blood cells?","Fight infections and diseases — part of the immune system"],
+["What is the nervous system?","Brain + spinal cord + nerves — sends electrical signals to control the body"],
+["What is the digestive system's job?","Break food into nutrients small enough to absorb into blood"],
+["What is the function of the skeleton?","Support, protection, movement, blood cell production"],
+["What is pollination?","Transfer of pollen from stamen to pistil — needed for plants to make seeds"],
+["What is the difference between arteries and veins?","Arteries carry blood away from heart (high pressure); veins carry blood back (low pressure)"],
+["What is an ecosystem?","A community of living things interacting with their non-living environment"],
+["What is a producer in a food chain?","An organism that makes its own food (plants, algae) using sunlight"],
+["What is a decomposer?","An organism that breaks down dead matter (fungi, bacteria) — recycles nutrients"],
+["What is adaptation?","A feature that helps an organism survive in its environment"],
+["What is the function of the brain?","Controls thoughts, memory, movement, and all body functions"],
+["What is mitosis?","Cell division that produces two identical copies — for growth and repair"],
+["What is a species?","A group of organisms that can breed together and produce fertile offspring"],
+["What is biodiversity?","The variety of different species living in an area"],
+["What is the water content of the human body?","About 60% water"],
+["What is the function of the liver?","Cleans blood, produces bile, stores nutrients, breaks down toxins"],
+["What is camouflage?","Colouring/pattern that helps an organism blend into its surroundings"],
+["What is the difference between herbivore, carnivore, omnivore?","Herbivore = eats plants; Carnivore = eats meat; Omnivore = eats both"]
+],
+geography: [
+["What are the 7 continents?","Asia, Africa, North America, South America, Antarctica, Europe, Australia/Oceania"],
+["What are the 5 oceans?","Pacific, Atlantic, Indian, Southern, Arctic"],
+["What is the largest continent?","Asia (44.6 million km²)"],
+["What is the largest ocean?","Pacific — covers more area than all land combined"],
+["What is the longest river?","Nile (6,650 km) or Amazon (by water volume)"],
+["What is the tallest mountain?","Mount Everest — 8,849 metres above sea level"],
+["What is the equator?","Imaginary line at 0° latitude dividing Earth into Northern and Southern hemispheres"],
+["What causes day and night?","Earth rotating on its axis once every 24 hours"],
+["What causes the seasons?","Earth's 23.5° axial tilt — different hemispheres get more direct sunlight at different times"],
+["What are latitude and longitude?","Grid lines: latitude = horizontal (N/S); longitude = vertical (E/W)"],
+["What is the water cycle?","Evaporation → Condensation → Precipitation → Collection → repeat"],
+["What are tectonic plates?","Giant slabs of rock making up Earth's crust — they move and cause earthquakes"],
+["What is a volcano?","An opening where magma from below Earth's crust reaches the surface as lava"],
+["What is the driest place on Earth?","Atacama Desert, Chile"],
+["What percentage of Earth is covered by water?","About 71%"],
+["What is the largest desert?","Antarctica (cold desert); largest hot desert = Sahara"],
+["What is the Ring of Fire?","A horseshoe zone around the Pacific with 75% of world's volcanoes"],
+["What are the 3 types of rock?","Igneous (cooled magma), Sedimentary (layers/fossils), Metamorphic (changed by heat/pressure)"],
+["What is Earth's core made of?","Iron and nickel — inner core solid, outer core liquid"],
+["What is the greenhouse effect?","Atmospheric gases trap Sun's heat — keeps Earth warm but excess causes global warming"],
+["What is erosion?","Wearing away of rock/soil by wind, water, or ice over time"],
+["What is a delta?","Land formed where a river deposits sediment as it enters the sea"],
+["What is the Prime Meridian?","0° longitude line running through Greenwich, London"],
+["What is the deepest point in the ocean?","Mariana Trench — about 11,000 metres deep"],
+["What is a tsunami?","A huge ocean wave caused by underwater earthquakes or volcanic eruptions"],
+["What are the layers of Earth?","Crust (thin), Mantle (thick/hot), Outer Core (liquid), Inner Core (solid)"],
+["What is the difference between weather and climate?","Weather = daily conditions; Climate = average weather over 30+ years"],
+["What is a biome?","A large region with similar climate, plants, and animals (e.g. rainforest, tundra, desert)"],
+["What is deforestation?","Cutting down forests — causes habitat loss, more CO₂, soil erosion"],
+["What is the largest country by area?","Russia (17.1 million km²)"],
+["What is the most populated country?","India (overtook China in 2023)"],
+["What is a peninsula?","Land surrounded by water on three sides (e.g. India, Italy, Florida)"],
+["What is an archipelago?","A chain of islands (e.g. Indonesia, Philippines, Japan)"],
+["What is the longest mountain range?","The Andes in South America (7,000 km)"],
+["What is a glacier?","A massive slow-moving river of ice — carves valleys over thousands of years"],
+["What is the ozone layer?","A layer of O₃ gas in the stratosphere that blocks harmful UV radiation from the Sun"],
+["What is the difference between a lake and a sea?","Lakes are freshwater and landlocked; seas are saltwater and connected to oceans"],
+["What is the largest rainforest?","Amazon Rainforest — produces about 6% of world's oxygen"],
+["What is continental drift?","The theory that continents were once joined (Pangaea) and slowly moved apart"],
+["What is the Richter scale?","Measures earthquake magnitude — each number is 10× stronger than the last"]
+],
+space: [
+["What are the 8 planets in order?","Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune"],
+["What is the largest planet?","Jupiter — 1,300 Earths could fit inside"],
+["What is the smallest planet?","Mercury — only slightly larger than our Moon"],
+["What is the closest star to Earth?","The Sun (next nearest: Proxima Centauri, 4.2 light-years away)"],
+["How old is Earth?","About 4.5 billion years"],
+["How old is the Universe?","About 13.8 billion years (started with the Big Bang)"],
+["What is a light-year?","Distance light travels in one year — about 9.46 trillion km"],
+["What is the Sun made of?","Mostly hydrogen (73%) and helium (25%) — a giant ball of plasma"],
+["What is the Milky Way?","Our galaxy — a spiral of 100–400 billion stars"],
+["What causes Moon phases?","We see different amounts of the Moon's sunlit half as it orbits Earth"],
+["How long does Earth take to orbit the Sun?","365.25 days (one year) — the .25 gives us leap years"],
+["How long does the Moon orbit Earth?","About 27.3 days"],
+["What is a satellite?","Any object orbiting another — Moon is natural; GPS satellites are artificial"],
+["Which planet is the Red Planet?","Mars — red from iron oxide (rust) on its surface"],
+["Which planet has the most visible rings?","Saturn — made of ice and rock particles"],
+["What is an asteroid?","A rocky object orbiting the Sun, mostly between Mars and Jupiter"],
+["What is a comet?","A ball of ice and dust that grows a glowing tail near the Sun"],
+["What is a black hole?","A region where gravity is so strong nothing can escape — not even light"],
+["Who was the first person in space?","Yuri Gagarin (April 12, 1961, Soviet Union)"],
+["Who first walked on the Moon?","Neil Armstrong (July 20, 1969, Apollo 11)"],
+["Why is there no sound in space?","Sound needs a medium (air/water) — space is a vacuum"],
+["What is the Sun's surface temperature?","About 5,500°C"],
+["What is a galaxy?","A massive collection of stars, gas, and dust held together by gravity"],
+["What is the asteroid belt?","A region between Mars and Jupiter containing millions of rocky objects"],
+["What is a nebula?","A giant cloud of gas and dust where new stars are born"],
+["What is a supernova?","The explosive death of a massive star — briefly outshines an entire galaxy"],
+["How far is the Moon from Earth?","About 384,400 km (1.3 light-seconds)"],
+["How far is the Sun from Earth?","About 150 million km (8 light-minutes)"],
+["What is the International Space Station (ISS)?","A habitable satellite orbiting Earth at 400km — astronauts live and work there"],
+["What is a meteor vs meteorite?","Meteor = streak of light in sky (shooting star); Meteorite = one that reaches the ground"],
+["What is the hottest planet?","Venus (462°C) — greenhouse effect traps heat despite not being closest to Sun"],
+["What planet rotates on its side?","Uranus — tilted 98° on its axis"],
+["What is a dwarf planet? Name one.","Too small to clear its orbit — Pluto, Eris, Ceres"],
+["What is the Big Bang?","The theory that the universe began as a tiny point and expanded rapidly 13.8 billion years ago"],
+["What is a constellation?","A pattern of stars as seen from Earth — e.g. Orion, Ursa Major"],
+["What is the Sun's energy source?","Nuclear fusion — hydrogen atoms fuse into helium, releasing enormous energy"],
+["How many moons does Jupiter have?","95 known moons (largest: Ganymede, bigger than Mercury)"],
+["What is a solar eclipse?","Moon passes between Sun and Earth, blocking sunlight"],
+["What is a lunar eclipse?","Earth passes between Sun and Moon, casting shadow on Moon"],
+["What is the Kuiper Belt?","A ring of icy objects beyond Neptune — home of Pluto and many comets"]
+]
+};
+
+const catColors = { physics:'var(--physics)', chemistry:'var(--chemistry)', biology:'var(--biology)', geography:'var(--geography)', space:'var(--space)' };
+let deck = [], current = 0, correct = 0, wrong = 0, missed = [];
+let timerInterval, startTime;
+
+function speak(text) {
+  if (!document.getElementById('audioMode').checked) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.85; u.pitch = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startDrill() {
+  deck = [];
+  document.querySelectorAll('.categories input:checked').forEach(c => {
+    facts[c.value].forEach(([q, a]) => deck.push({ q, a, cat: c.value }));
+  });
+  if (!deck.length) { alert('Select at least one category!'); return; }
+  shuffle(deck);
+  current = 0; correct = 0; wrong = 0; missed = [];
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('drill').classList.remove('hidden');
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('correctCount').textContent = 0;
+  document.getElementById('wrongCount').textContent = 0;
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  showCard();
+}
+
+function exitDrill() {
+  clearInterval(timerInterval);
+  window.speechSynthesis.cancel();
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+
+function updateTimer() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('timer').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+function showCard() {
+  if (current >= deck.length) { endDrill(); return; }
+  const card = document.getElementById('card');
+  card.style.visibility = 'hidden';
+  card.style.transition = 'none';
+  card.classList.remove('flipped');
+  const { q, a, cat } = deck[current];
+  document.getElementById('question').textContent = q;
+  document.getElementById('answer').textContent = a;
+  document.getElementById('hint').textContent = `${current+1} / ${deck.length}`;
+  const tag = document.getElementById('catTag');
+  tag.textContent = cat;
+  tag.style.background = catColors[cat];
+  tag.style.color = '#000';
+  document.getElementById('remainingCount').textContent = deck.length - current;
+  document.getElementById('progressFill').style.width = `${(current/deck.length)*100}%`;
+  void card.offsetHeight;
+  card.style.transition = '';
+  card.style.visibility = '';
+  speak(q);
+}
+
+function flipCard() {
+  const card = document.getElementById('card');
+  card.classList.toggle('flipped');
+  if (card.classList.contains('flipped')) speak(deck[current].a);
+}
+
+function markCorrect() { correct++; document.getElementById('correctCount').textContent = correct; current++; showCard(); }
+function markWrong() { wrong++; missed.push(deck[current]); document.getElementById('wrongCount').textContent = wrong; current++; showCard(); }
+
+function endDrill() {
+  clearInterval(timerInterval);
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  const pct = deck.length ? Math.round((correct/deck.length)*100) : 0;
+  document.getElementById('finalScore').textContent = `${pct}%`;
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('finalTime').textContent = `${correct}/${deck.length} correct in ${Math.floor(s/60)}m ${s%60}s`;
+  if (missed.length) {
+    document.getElementById('missedList').classList.remove('hidden');
+    document.getElementById('missedFacts').innerHTML = missed.map(m => `<div class="item"><strong>${m.q}</strong><div class="ans">${m.a}</div></div>`).join('');
+  } else { document.getElementById('missedList').classList.add('hidden'); }
+}
+
+function retryMissed() {
+  if (!missed.length) { resetAll(); return; }
+  deck = shuffle([...missed]); current = 0; correct = 0; wrong = 0; missed = [];
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('drill').classList.remove('hidden');
+  document.getElementById('correctCount').textContent = 0;
+  document.getElementById('wrongCount').textContent = 0;
+  startTime = Date.now(); timerInterval = setInterval(updateTimer, 1000);
+  showCard();
+}
+
+function resetAll() {
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('drill').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('drill').classList.contains('hidden')) return;
+  if (e.key === 'Escape') { exitDrill(); return; }
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+  if (e.key === 'ArrowRight' || e.key === 'y') markCorrect();
+  if (e.key === 'ArrowLeft' || e.key === 'n') markWrong();
+});
+</script>
+</body>
+</html>
