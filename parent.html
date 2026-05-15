@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Parent Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --accent: #8b5cf6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-back {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+    }
+
+    .header h1 {
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Section */
+    .section {
+      padding: 0 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    /* Kids Grid */
+    .kids-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .kid-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.2rem;
+      border-left: 4px solid var(--accent);
+      transition: all 0.2s;
+    }
+
+    .kid-card:hover {
+      transform: translateX(4px);
+    }
+
+    .kid-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .kid-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .kid-name {
+      font-weight: 600;
+    }
+
+    .kid-streak {
+      font-size: 0.8rem;
+      color: #fb923c;
+    }
+
+    .kid-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .kid-assigned {
+      font-size: 0.8rem;
+      color: var(--accent);
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover { transform: translateY(-2px); }
+
+    .action-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .action-btn.secondary {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /* Assignment Manager */
+    .assignment-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.5rem;
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.2rem;
+      min-height: 400px;
+    }
+
+    .content-list {
+      border-right: 1px solid rgba(255,255,255,0.05);
+      padding-right: 1.2rem;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .content-list h3 {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .subject-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .subject-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .content-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.8rem;
+      background: var(--surface2);
+      border-radius: 8px;
+      margin-bottom: 0.4rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .content-item:hover {
+      border-color: var(--accent);
+    }
+
+    .content-item.selected {
+      border-color: var(--success);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .content-item .icon { font-size: 1.2rem; }
+    .content-item .name { flex: 1; }
+    .content-item .format {
+      font-size: 0.65rem;
+      color: var(--muted);
+      background: var(--bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .content-item .preview-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .content-item:hover .preview-btn { opacity: 1; }
+
+    /* Student Columns */
+    .student-columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+    }
+
+    .student-column {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 0.8rem;
+      min-height: 200px;
+      transition: all 0.2s;
+    }
+
+    .student-column.tap-ready {
+      border: 2px dashed var(--success);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .student-column-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .student-column-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .student-column-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .assigned-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .assigned-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.6rem;
+      background: var(--surface);
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .assigned-item .remove-btn {
+      margin-left: auto;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      border: none;
+      color: var(--error);
+      cursor: pointer;
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .assigned-item:hover .remove-btn { opacity: 1; }
+
+    .drop-hint {
+      text-align: center;
+      padding: 1.5rem 0.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Sync Status */
+    .sync-status {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--surface);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      z-index: 100;
+    }
+
+    .sync-status.synced { color: var(--success); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .assignment-grid {
+        grid-template-columns: 1fr;
+      }
+      .content-list {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-bottom: 1rem;
+        max-height: 300px;
+      }
+      .student-columns {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .student-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="nav-back" onclick="goBack()">←</button>
+    <h1>👨‍👩‍👧‍👦 Parent Dashboard</h1>
+    <div></div>
+  </header>
+
+  <div class="section">
+    <h2 class="section-title">Kids Overview</h2>
+    <div class="kids-grid" id="kidsGrid"></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="quick-actions">
+      <button class="action-btn primary" onclick="assignAllToAll()">📚 Assign All to Everyone</button>
+      <button class="action-btn secondary" onclick="clearAllAssignments()">🗑️ Clear All</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Assign Content</h2>
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem;">
+      Tap content to select, then tap a child to assign. Click ▶ to preview.
+    </p>
+    <div class="assignment-grid">
+      <div class="content-list">
+        <h3>All Content</h3>
+        <div id="contentList"></div>
+      </div>
+      <div class="student-columns" id="studentColumns"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved!</div>
+  <div class="sync-status" id="syncStatus">☁️ Syncing...</div>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    let catalog = null;
+    let allContent = [];
+    let selectedContent = null;
+
+    async function init() {
+      // Enable cloud sync
+      setTimeout(async () => {
+        if (window.MokshFirebase) {
+          const synced = await Moksh.enableCloudSync();
+          if (synced) {
+            document.getElementById('syncStatus').textContent = '☁️ Synced';
+            document.getElementById('syncStatus').classList.add('synced');
+            renderAll();
+            Moksh.onSyncUpdate(() => {
+              renderAll();
+              showToast('Updated from another device!');
+            });
+          }
+        } else {
+          document.getElementById('syncStatus').textContent = '📱 Local';
+        }
+      }, 1000);
+
+      try {
+        const catalogRes = await fetch('data/catalog.json');
+        catalog = await catalogRes.json();
+
+        const contentRes = await fetch('data/content.json');
+        const contentData = await contentRes.json();
+        allContent = contentData.content;
+
+        renderAll();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function renderAll() {
+      renderKidsGrid();
+      renderContentList();
+      renderStudentColumns();
+    }
+
+    function renderKidsGrid() {
+      const grid = document.getElementById('kidsGrid');
+      grid.innerHTML = Object.values(catalog.students)
+        .sort((a, b) => a.order - b.order)
+        .map(student => {
+          const stats = Moksh.getOverallStats(student.id);
+          const assignments = Moksh.getAssignments(student.id);
+          return `
+            <div class="kid-card" style="border-left-color: ${student.color}">
+              <div class="kid-header">
+                <img src="${student.avatar}" class="kid-avatar" alt="${student.name}">
+                <div>
+                  <div class="kid-name">${student.name}</div>
+                  <div class="kid-streak">${stats?.currentStreak > 0 ? `🔥 ${stats.currentStreak} days` : '💤 No streak'}</div>
+                </div>
+              </div>
+              <div class="kid-stats">
+                <span>📊 ${stats?.totalSessions || 0} sessions</span>
+                <span>🎯 ${stats?.overallAccuracy || 0}%</span>
+              </div>
+              <div class="kid-assigned">
+                ${assignments.length > 0 ? `✓ ${assignments.length} assigned` : '⚠️ Nothing assigned'}
+              </div>
+            </div>
+          `;
+        }).join('');
+    }
+
+    function renderContentList() {
+      const container = document.getElementById('contentList');
+      const bySubject = {};
+
+      allContent.forEach(content => {
+        if (!bySubject[content.subject]) bySubject[content.subject] = [];
+        bySubject[content.subject].push(content);
+      });
+
+      let html = '';
+      Object.entries(catalog.subjects)
+        .sort((a, b) => a[1].order - b[1].order)
+        .forEach(([subjectId, subject]) => {
+          const items = bySubject[subjectId] || [];
+          if (items.length === 0) return;
+
+          html += `
+            <div class="subject-group">
+              <div class="subject-label" style="color: ${subject.color}">
+                <span>${subject.icon}</span> ${subject.name}
+              </div>
+              ${items.map(content => `
+                <div class="content-item ${selectedContent === content.id ? 'selected' : ''}"
+                     onclick="selectContent('${content.id}')"
+                     style="--item-color: ${subject.color}">
+                  <span class="icon">${content.icon || subject.icon}</span>
+                  <span class="name">${content.name}</span>
+                  <span class="format">${content.format}</span>
+                  <button class="preview-btn" onclick="event.stopPropagation(); previewContent('${content.id}')">▶</button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        });
+
+      container.innerHTML = html;
+    }
+
+    function renderStudentColumns() {
+      const container = document.getElementById('studentColumns');
+      container.innerHTML = Object.values(catalog.students)
+        .sort((a, b) => a.order - b.order)
+        .map(student => {
+          const assignments = Moksh.getAssignments(student.id);
+          return `
+            <div class="student-column ${selectedContent ? 'tap-ready' : ''}"
+                 onclick="assignToStudent('${student.id}')">
+              <div class="student-column-header">
+                <img src="${student.avatar}" class="student-column-avatar" alt="">
+                <span class="student-column-name">${student.name}</span>
+              </div>
+              <div class="assigned-list">
+                ${assignments.length === 0
+                  ? '<div class="drop-hint">Tap to assign</div>'
+                  : assignments.map(contentId => {
+                      const content = allContent.find(c => c.id === contentId);
+                      if (!content) return '';
+                      return `
+                        <div class="assigned-item">
+                          <span>${content.icon || '📄'}</span>
+                          <span>${content.name}</span>
+                          <button class="remove-btn" onclick="event.stopPropagation(); removeAssignment('${student.id}', '${contentId}')">×</button>
+                        </div>
+                      `;
+                    }).join('')
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
+    }
+
+    function selectContent(contentId) {
+      selectedContent = selectedContent === contentId ? null : contentId;
+      renderContentList();
+      renderStudentColumns();
+    }
+
+    function assignToStudent(studentId) {
+      if (!selectedContent) return;
+
+      Moksh.assignActivity(studentId, selectedContent);
+      selectedContent = null;
+      renderAll();
+      showToast('Assigned!');
+    }
+
+    function removeAssignment(studentId, contentId) {
+      Moksh.unassignActivity(studentId, contentId);
+      renderAll();
+      showToast('Removed');
+    }
+
+    function previewContent(contentId) {
+      const content = allContent.find(c => c.id === contentId);
+      if (!content) return;
+
+      let url = '';
+      if (content.format === 'flashcard') {
+        url = `learn/flashcard.html?id=${contentId}`;
+      } else if (content.format === 'story' || content.format === 'story-qa') {
+        url = `learn/story.html?id=${contentId}`;
+      }
+      if (url) window.open(url, '_blank');
+    }
+
+    function assignAllToAll() {
+      Object.keys(catalog.students).forEach(studentId => {
+        allContent.forEach(content => {
+          Moksh.assignActivity(studentId, content.id);
+        });
+      });
+      renderAll();
+      showToast('All assigned!');
+    }
+
+    function clearAllAssignments() {
+      if (!confirm('Clear all assignments?')) return;
+      Object.keys(catalog.students).forEach(studentId => {
+        Moksh.setAssignments(studentId, []);
+      });
+      renderAll();
+      showToast('Cleared');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+{
+  "subjects": {
+    "math": {
+      "id": "math",
+      "name": "Math",
+      "nameHi": "गणित",
+      "icon": "🔢",
+      "color": "#6366f1",
+      "order": 1
+    },
+    "english": {
+      "id": "english",
+      "name": "English",
+      "nameHi": "अंग्रेज़ी",
+      "icon": "📖",
+      "color": "#ec4899",
+      "order": 2
+    },
+    "hindi": {
+      "id": "hindi",
+      "name": "Hindi",
+      "nameHi": "हिंदी",
+      "icon": "🙏",
+      "color": "#ff9933",
+      "order": 3
+    },
+    "science": {
+      "id": "science",
+      "name": "Science",
+      "nameHi": "विज्ञान",
+      "icon": "🔬",
+      "color": "#22c55e",
+      "order": 4
+    }
+  },
+
+  "topics": {
+    "times-tables": {
+      "id": "times-tables",
+      "subject": "math",
+      "name": "Times Tables",
+      "nameHi": "पहाड़े",
+      "icon": "✕",
+      "order": 1
+    },
+    "fractions": {
+      "id": "fractions",
+      "subject": "math",
+      "name": "Fractions",
+      "nameHi": "भिन्न",
+      "icon": "½",
+      "order": 2
+    },
+    "phonics-blends": {
+      "id": "phonics-blends",
+      "subject": "english",
+      "name": "Phonics Blends",
+      "nameHi": "ध्वनि मिश्रण",
+      "icon": "🔤",
+      "order": 1
+    },
+    "family-stories": {
+      "id": "family-stories",
+      "subject": "english",
+      "name": "Family Stories",
+      "nameHi": "पारिवारिक कहानियाँ",
+      "icon": "👨‍👩‍👧‍👦",
+      "order": 2
+    },
+    "mythology": {
+      "id": "mythology",
+      "subject": "hindi",
+      "name": "Mythology",
+      "nameHi": "पौराणिक कथाएँ",
+      "icon": "🙏",
+      "order": 1
+    },
+    "science-facts": {
+      "id": "science-facts",
+      "subject": "science",
+      "name": "Science Facts",
+      "nameHi": "विज्ञान तथ्य",
+      "icon": "💡",
+      "order": 1
+    }
+  },
+
+  "formats": {
+    "flashcard": {
+      "id": "flashcard",
+      "name": "Flashcards",
+      "icon": "⚡",
+      "description": "Quick practice cards"
+    },
+    "story": {
+      "id": "story",
+      "name": "Story",
+      "icon": "📖",
+      "description": "Read and learn"
+    },
+    "story-qa": {
+      "id": "story-qa",
+      "name": "Story + Questions",
+      "icon": "📝",
+      "description": "Read then answer"
+    },
+    "mcq": {
+      "id": "mcq",
+      "name": "Quiz",
+      "icon": "✓",
+      "description": "Multiple choice"
+    }
+  },
+
+  "students": {
+    "shivaya": {
+      "id": "shivaya",
+      "name": "Shivaya",
+      "avatar": "avatars/shivaya.jpg",
+      "color": "#ec4899",
+      "order": 1
+    },
+    "omjai": {
+      "id": "omjai",
+      "name": "Omjai",
+      "avatar": "avatars/omjai.jpg",
+      "color": "#6366f1",
+      "order": 2
+    },
+    "kainav": {
+      "id": "kainav",
+      "name": "Kainav",
+      "avatar": "avatars/kainav.jpg",
+      "color": "#22c55e",
+      "order": 3
+    },
+    "maneera": {
+      "id": "maneera",
+      "name": "Maneera",
+      "avatar": "avatars/maneera.jpg",
+      "color": "#f59e0b",
+      "order": 4
+    }
+  }
+}

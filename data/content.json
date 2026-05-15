@@ -1,0 +1,270 @@
+{
+  "content": [
+    {
+      "id": "math-times-tables",
+      "subject": "math",
+      "topic": "times-tables",
+      "format": "flashcard",
+      "name": "Times Tables",
+      "nameHi": "पहाड़े",
+      "icon": "⚡",
+      "difficulty": 1,
+      "ageRange": [5, 10],
+      "items": [
+        {"front": "2 × 1", "back": "2"},
+        {"front": "2 × 2", "back": "4"},
+        {"front": "2 × 3", "back": "6"},
+        {"front": "2 × 4", "back": "8"},
+        {"front": "2 × 5", "back": "10"},
+        {"front": "2 × 6", "back": "12"},
+        {"front": "3 × 3", "back": "9"},
+        {"front": "3 × 4", "back": "12"},
+        {"front": "3 × 5", "back": "15"},
+        {"front": "4 × 4", "back": "16"},
+        {"front": "4 × 5", "back": "20"},
+        {"front": "5 × 5", "back": "25"},
+        {"front": "6 × 6", "back": "36"},
+        {"front": "7 × 7", "back": "49"},
+        {"front": "8 × 8", "back": "64"},
+        {"front": "9 × 9", "back": "81"},
+        {"front": "10 × 10", "back": "100"},
+        {"front": "12 × 12", "back": "144"}
+      ]
+    },
+    {
+      "id": "science-facts",
+      "subject": "science",
+      "topic": "science-facts",
+      "format": "flashcard",
+      "name": "Science Facts",
+      "nameHi": "विज्ञान तथ्य",
+      "icon": "🔬",
+      "difficulty": 1,
+      "ageRange": [5, 10],
+      "items": [
+        {"front": "What planet do we live on?", "back": "Earth"},
+        {"front": "What do plants need to grow?", "back": "Water, sunlight, air"},
+        {"front": "How many legs does a spider have?", "back": "8 legs"},
+        {"front": "What is the largest animal?", "back": "Blue whale"},
+        {"front": "What makes a rainbow?", "back": "Sunlight and rain"},
+        {"front": "What do we breathe?", "back": "Oxygen"},
+        {"front": "How many senses do we have?", "back": "5 senses"},
+        {"front": "What is H2O?", "back": "Water"},
+        {"front": "What is the closest star?", "back": "The Sun"},
+        {"front": "How many bones in human body?", "back": "206 bones"}
+      ]
+    },
+    {
+      "id": "phonics-shchth-cards",
+      "subject": "english",
+      "topic": "phonics-blends",
+      "format": "flashcard",
+      "name": "sh · ch · th",
+      "icon": "🔤",
+      "difficulty": 1,
+      "ageRange": [4, 7],
+      "items": [
+        {"front": "ship", "back": "sh - a boat", "highlight": "sh"},
+        {"front": "shop", "back": "sh - a store", "highlight": "sh"},
+        {"front": "fish", "back": "sh - swims", "highlight": "sh"},
+        {"front": "chip", "back": "ch - a snack", "highlight": "ch"},
+        {"front": "chin", "back": "ch - below mouth", "highlight": "ch"},
+        {"front": "much", "back": "ch - a lot", "highlight": "ch"},
+        {"front": "this", "back": "th - not that", "highlight": "th"},
+        {"front": "that", "back": "th - not this", "highlight": "th"},
+        {"front": "with", "back": "th - together", "highlight": "th"},
+        {"front": "path", "back": "th - a trail", "highlight": "th"}
+      ]
+    },
+    {
+      "id": "phonics-stspsn-cards",
+      "subject": "english",
+      "topic": "phonics-blends",
+      "format": "flashcard",
+      "name": "st · sp · sn",
+      "icon": "🔤",
+      "difficulty": 1,
+      "ageRange": [4, 7],
+      "items": [
+        {"front": "stop", "back": "st - halt", "highlight": "st"},
+        {"front": "step", "back": "st - walk", "highlight": "st"},
+        {"front": "star", "back": "st - in sky", "highlight": "st"},
+        {"front": "spin", "back": "sp - turn", "highlight": "sp"},
+        {"front": "spot", "back": "sp - see", "highlight": "sp"},
+        {"front": "spoon", "back": "sp - eating", "highlight": "sp"},
+        {"front": "snap", "back": "sn - quick break", "highlight": "sn"},
+        {"front": "snack", "back": "sn - small food", "highlight": "sn"},
+        {"front": "snow", "back": "sn - cold white", "highlight": "sn"}
+      ]
+    },
+    {
+      "id": "phonics-shchth-story",
+      "subject": "english",
+      "topic": "phonics-blends",
+      "format": "story",
+      "name": "The Shop for Chips!",
+      "icon": "📖",
+      "difficulty": 1,
+      "ageRange": [4, 7],
+      "focusSounds": ["sh", "ch", "th"],
+      "pages": [
+        {"text": "\"Let us go to <b>th</b>e <b>sh</b>op,\" says Mom.", "emoji": "🛒"},
+        {"text": "I put on my <b>sh</b>oes. I <b>sh</b>ut <b>th</b>e door.", "emoji": "👟🚪"},
+        {"text": "We walk on <b>th</b>e pa<b>th</b>. I see a <b>sh</b>ell!", "emoji": "🐚"},
+        {"text": "At <b>th</b>e <b>sh</b>op, I pick <b>ch</b>ips and <b>ch</b>eese.", "emoji": "🍟🧀"},
+        {"text": "Mom gets a bun<b>ch</b> of <b>ch</b>erries. Yum!", "emoji": "🍒"},
+        {"text": "\"Can I have <b>ch</b>ocolate?\" I ask wi<b>th</b> a grin.", "emoji": "🍫😁"},
+        {"text": "Mom says, \"<b>Sh</b>! Not too mu<b>ch</b>!\"", "emoji": "🤫"},
+        {"text": "We pay and <b>th</b>ank <b>th</b>e man at <b>th</b>e till.", "emoji": "💰👋"},
+        {"text": "Back home, I mun<b>ch</b> my <b>ch</b>ips on <b>th</b>e mat.", "emoji": "😋🏠"},
+        {"text": "\"<b>Th</b>at was fun!\" I say. Mom gives me a big hug.", "emoji": "🤗💛"}
+      ]
+    },
+    {
+      "id": "story-bua",
+      "subject": "english",
+      "topic": "family-stories",
+      "format": "story",
+      "name": "Bua Ji",
+      "icon": "🧡",
+      "difficulty": 1,
+      "ageRange": [4, 8],
+      "paragraphs": [
+        "Today we go to Bua Ji's house! I am so excited. Bua Ji always gives the best hugs.",
+        "We take the car. Papa drives. I look out the window and count the trees. One, two, three...",
+        "Bua Ji's house has a big garden. There are roses and sunflowers. I help water the plants.",
+        "We eat yummy food together. Bua Ji makes my favorite - aloo paratha! So delicious.",
+        "Before we leave, Bua Ji gives me a gift. It's a beautiful book with pictures of animals.",
+        "I love visiting Bua Ji. She makes everything feel special!"
+      ]
+    },
+    {
+      "id": "story-noni",
+      "subject": "english",
+      "topic": "family-stories",
+      "format": "story",
+      "name": "Noni Mata",
+      "icon": "💜",
+      "difficulty": 1,
+      "ageRange": [4, 8],
+      "paragraphs": [
+        "Noni Mata came to visit today! I ran to the door so fast when the bell rang.",
+        "She brought a big bag. What's inside? Surprises for everyone!",
+        "Noni Mata tells the best stories. She knows about kings and queens and magical forests.",
+        "We sit together on the sofa. She teaches me how to braid hair.",
+        "At night, Noni Mata sings songs. Her voice is so soft and sweet.",
+        "I wish Noni Mata could stay forever. I love her so much!"
+      ]
+    },
+    {
+      "id": "story-taya",
+      "subject": "english",
+      "topic": "family-stories",
+      "format": "story",
+      "name": "Taya Ji",
+      "icon": "💚",
+      "difficulty": 1,
+      "ageRange": [4, 8],
+      "paragraphs": [
+        "Taya Ji is so funny! He always makes everyone laugh.",
+        "Today Taya Ji took me to the park. We played on the swings and slides.",
+        "He taught me to fly a kite. Up, up, up it goes into the blue sky!",
+        "Taya Ji knows magic tricks. He can make coins disappear!",
+        "We had ice cream together. I chose chocolate, he chose mango.",
+        "Playing with Taya Ji is always an adventure!"
+      ]
+    },
+    {
+      "id": "story-dada",
+      "subject": "english",
+      "topic": "family-stories",
+      "format": "story",
+      "name": "Dada Dadi",
+      "icon": "❤️",
+      "difficulty": 1,
+      "ageRange": [4, 8],
+      "paragraphs": [
+        "Dada Dadi's room is my favorite place in the whole house.",
+        "Dadi keeps special treats in a tin box. She gives me one every day!",
+        "Dada reads the newspaper. Sometimes he reads to me about animals and stars.",
+        "We look at old photo albums together. There are pictures of Papa when he was small like me!",
+        "Dadi teaches me prayers. We close our eyes and say them together.",
+        "I feel so loved when I'm with Dada and Dadi!"
+      ]
+    },
+    {
+      "id": "story-papa",
+      "subject": "english",
+      "topic": "family-stories",
+      "format": "story",
+      "name": "Papa",
+      "icon": "💙",
+      "difficulty": 1,
+      "ageRange": [4, 8],
+      "paragraphs": [
+        "Papa is my superhero! He can do anything.",
+        "In the morning, Papa makes breakfast. Eggs and toast - just the way I like it.",
+        "Papa helps me with homework. He explains things so I understand.",
+        "On weekends, we go for bike rides. Wind in my hair, Papa by my side!",
+        "Papa gives the best shoulder rides. I can touch the ceiling!",
+        "I want to be just like Papa when I grow up!"
+      ]
+    },
+    {
+      "id": "hindi-ganesh",
+      "subject": "hindi",
+      "topic": "mythology",
+      "format": "story",
+      "name": "गणेश जी जीते",
+      "nameEn": "Ganesh Ji Wins",
+      "icon": "🐘",
+      "difficulty": 1,
+      "ageRange": [4, 10],
+      "paragraphs": [
+        "एक बार शिव जी के पास मीठा फल था। दोनों बेटे — गणेश और कार्तिकेय — उसे चाहते थे।",
+        "शिव जी बोले, \"जो पहले दुनिया का चक्कर लगाकर आएगा, फल उसी का।\"",
+        "कार्तिकेय झट मोर पर बैठे और उड़ चले — पहाड़, नदी, जंगल पार करते गए।",
+        "गणेश जी ने नन्हे चूहे को देखा। सोचा, मुस्कुराए। फिर माँ-बाप के चारों ओर तीन चक्कर लगाए और बोले, \"माँ-पिता ही मेरी पूरी दुनिया हैं।\"",
+        "शिव जी हँसे, पार्वती जी की आँखें भर आईं। फल गणेश जी को मिला।",
+        "थोड़ी देर बाद कार्तिकेय थके-हारे लौटे — देखा तो भैया आराम से फल खा रहे थे!",
+        "तभी से हर शुभ काम में सबसे पहले गणेश जी को याद किया जाता है।"
+      ]
+    },
+    {
+      "id": "hindi-krishna",
+      "subject": "hindi",
+      "topic": "mythology",
+      "format": "story",
+      "name": "कृष्ण जी और माखन",
+      "nameEn": "Krishna and Butter",
+      "icon": "🧈",
+      "difficulty": 1,
+      "ageRange": [4, 10],
+      "paragraphs": [
+        "नन्हे कृष्ण जी बहुत शरारती थे। उन्हें माखन बहुत पसंद था।",
+        "माँ यशोदा माखन को ऊँचे मटके में छुपा देती थीं। पर कृष्ण जी चुप कहाँ बैठते!",
+        "उन्होंने अपने दोस्तों को बुलाया। सब मिलकर एक के ऊपर एक चढ़े। कृष्ण जी सबसे ऊपर पहुँचे और मटका फोड़ दिया।",
+        "माखन गिरा, सब हँसे, कृष्ण जी ने मुँह भर के खाया।",
+        "तभी माँ आ गईं! कृष्ण जी ने मीठी मुस्कान दी। माँ का गुस्सा पल में पिघल गया।",
+        "आज भी जन्माष्टमी पर बच्चे यही \"दही-हांडी\" खेल खेलते हैं।"
+      ]
+    },
+    {
+      "id": "hindi-durga",
+      "subject": "hindi",
+      "topic": "mythology",
+      "format": "story",
+      "name": "दुर्गा माँ और महिषासुर",
+      "nameEn": "Durga Maa and Mahishasur",
+      "icon": "🦁",
+      "difficulty": 1,
+      "ageRange": [4, 10],
+      "paragraphs": [
+        "बहुत समय पहले महिषासुर नाम का राक्षस था। उसे वरदान मिला था — कोई मर्द उसे हरा नहीं सकता। घमंड में आकर उसने स्वर्ग पर कब्ज़ा कर लिया।",
+        "सब देवता डरकर भागे। तब सबने मिलकर अपनी-अपनी शक्ति जोड़ी और एक तेज़ रोशनी से दुर्गा माँ प्रकट हुईं। दस हाथ, हर हाथ में एक हथियार, और शेर उनकी सवारी!",
+        "माँ शेर पर बैठकर युद्ध के मैदान में पहुँचीं। नौ दिन और नौ रातों तक भयंकर लड़ाई चली। दसवें दिन माँ ने त्रिशूल से महिषासुर का अंत कर दिया।",
+        "स्वर्ग में फिर से खुशी लौट आई। तभी से हर साल नवरात्रि के नौ दिन माँ की पूजा होती है, और दसवें दिन — दशहरा — बुराई पर अच्छाई की जीत मनाई जाती है।"
+      ]
+    }
+  ]
+}

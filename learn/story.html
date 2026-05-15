@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Story</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --accent: #ec4899;
+      --success: #22c55e;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body.hindi {
+      font-family: 'Tiro Devanagari Hindi', serif;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-back {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .nav-title h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .nav-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .nav-icon {
+      font-size: 2rem;
+    }
+
+    /* Progress */
+    .progress-bar {
+      height: 4px;
+      background: var(--surface);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      transition: width 0.3s;
+      width: 0%;
+    }
+
+    /* Story Container */
+    .story-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Story Header */
+    .story-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .story-icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+    }
+
+    .story-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .story-subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* Story Content - Paragraphs */
+    .story-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .story-para {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+      font-size: 1.2rem;
+      line-height: 1.9;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .story-para.hindi-para {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: 1.4rem;
+      line-height: 2.2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Story Content - Phonics Pages */
+    .phonics-page {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border-left: 5px solid var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .phonics-page:hover {
+      transform: translateX(4px);
+    }
+
+    .phonics-page.read {
+      border-left-color: var(--success);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .phonics-page p {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .phonics-page b {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .phonics-page .emoji {
+      font-size: 2rem;
+      text-align: center;
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    /* Finish Button */
+    .finish-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 2.5rem auto;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--success), #16a34a);
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+      transition: all 0.3s;
+    }
+
+    .finish-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(34, 197, 94, 0.5);
+    }
+
+    /* Story Footer */
+    .story-footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-style: italic;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hindi-footer {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: 1.3rem;
+    }
+
+    /* Complete Overlay */
+    .complete-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .complete-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .complete-icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+    }
+
+    .complete-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .complete-btn {
+      padding: 1rem 3rem;
+      border-radius: 50px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .complete-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .complete-hint {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Speak Button */
+    .speak-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+      z-index: 50;
+    }
+
+    .speak-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Confetti */
+    #confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .story-title { font-size: 1.5rem; }
+      .story-para { font-size: 1.1rem; padding: 1.2rem; }
+      .story-para.hindi-para { font-size: 1.2rem; }
+      .story-icon { font-size: 4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-back" onclick="goBack()" aria-label="Go back">←</button>
+    <div class="nav-title">
+      <h1 id="navTitle">Story</h1>
+      <span class="nav-subtitle" id="navSubtitle"></span>
+    </div>
+    <span class="nav-icon" id="navIcon">📖</span>
+  </nav>
+
+  <div class="story-container" id="storyContainer">
+    <!-- Content loaded dynamically -->
+  </div>
+
+  <button class="speak-btn" id="speakBtn" onclick="speakStory()" aria-label="Read aloud">🔊</button>
+
+  <div class="complete-overlay" id="completeOverlay" onclick="goBack()">
+    <div class="complete-icon">🌟</div>
+    <div class="complete-title">Great Reading!</div>
+    <button class="complete-btn">Done</button>
+    <p class="complete-hint">Tap anywhere to continue</p>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const contentId = params.get('id');
+    const studentId = params.get('student') || 'guest';
+
+    let contentData = null;
+    let pagesRead = 0;
+    let totalPages = 0;
+
+    async function init() {
+      if (window.MokshFirebase) {
+        await Moksh.enableCloudSync();
+      }
+
+      try {
+        const response = await fetch('../data/content.json');
+        const data = await response.json();
+        contentData = data.content.find(c => c.id === contentId);
+
+        if (!contentData || !['story', 'story-qa'].includes(contentData.format)) {
+          showError('Story not found');
+          return;
+        }
+
+        const catalogRes = await fetch('../data/catalog.json');
+        const catalog = await catalogRes.json();
+        const subject = catalog.subjects[contentData.subject];
+
+        // Update nav
+        document.getElementById('navTitle').textContent = contentData.name;
+        document.getElementById('navSubtitle').textContent = subject.name;
+        document.getElementById('navIcon').textContent = contentData.icon || subject.icon;
+        document.documentElement.style.setProperty('--accent', subject.color);
+
+        // Check if Hindi
+        if (contentData.subject === 'hindi') {
+          document.body.classList.add('hindi');
+        }
+
+        // Start session
+        Moksh.startSession(studentId, contentId);
+
+        // Render content
+        renderStory();
+      } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to load story');
+      }
+    }
+
+    function renderStory() {
+      const container = document.getElementById('storyContainer');
+      const isHindi = contentData.subject === 'hindi';
+      const isPhonics = contentData.pages && contentData.focusSounds;
+
+      let html = `
+        <div class="story-header" style="border-color: var(--accent);">
+          <div class="story-icon">${contentData.icon}</div>
+          <h1 class="story-title">${contentData.name}</h1>
+          ${contentData.nameEn ? `<p class="story-subtitle">${contentData.nameEn}</p>` : ''}
+          ${contentData.focusSounds ? `<p class="story-subtitle">Focus: ${contentData.focusSounds.join(' · ')}</p>` : ''}
+        </div>
+        <div class="story-content">
+      `;
+
+      if (isPhonics && contentData.pages) {
+        // Phonics story with pages
+        totalPages = contentData.pages.length;
+        contentData.pages.forEach((page, i) => {
+          html += `
+            <div class="phonics-page" data-index="${i}" onclick="markRead(${i})">
+              <p>${page.text}</p>
+              <span class="emoji">${page.emoji}</span>
+            </div>
+          `;
+        });
+        html += `</div><p class="story-footer">The End ✨</p>`;
+      } else if (contentData.paragraphs) {
+        // Regular story with paragraphs
+        totalPages = contentData.paragraphs.length;
+        contentData.paragraphs.forEach((para, i) => {
+          const paraClass = isHindi ? 'story-para hindi-para' : 'story-para';
+          html += `<div class="${paraClass}" style="animation-delay: ${i * 0.1}s">${para}</div>`;
+        });
+        html += `</div>`;
+
+        // Footer
+        if (isHindi) {
+          html += `<div class="story-footer hindi-footer">॥ इति कथा समाप्त ॥</div>`;
+        }
+
+        // Finish button
+        const btnText = isHindi ? 'मैंने पढ़ लिया!' : 'I Finished Reading!';
+        html += `<button class="finish-btn" onclick="finishStory()">${btnText}</button>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function markRead(index) {
+      const page = document.querySelector(`.phonics-page[data-index="${index}"]`);
+      if (!page.classList.contains('read')) {
+        page.classList.add('read');
+        pagesRead++;
+        Moksh.recordAnswer(studentId, contentId, true);
+        updateProgress();
+
+        // Speak the text
+        const text = contentData.pages[index].text.replace(/<[^>]*>/g, '');
+        speak(text);
+
+        if (pagesRead === totalPages) {
+          setTimeout(showComplete, 1000);
+        }
+      }
+    }
+
+    function finishStory() {
+      pagesRead = totalPages;
+      Moksh.recordAnswer(studentId, contentId, true);
+      updateProgress();
+      showComplete();
+    }
+
+    function updateProgress() {
+      const pct = totalPages > 0 ? (pagesRead / totalPages) * 100 : 0;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+    }
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakStory() {
+      let text = '';
+      if (contentData.paragraphs) {
+        text = contentData.paragraphs.join(' ');
+      } else if (contentData.pages) {
+        text = contentData.pages.map(p => p.text.replace(/<[^>]*>/g, '')).join(' ');
+      }
+      speak(text);
+    }
+
+    function showComplete() {
+      Moksh.endSession(studentId, contentId);
+      document.getElementById('completeOverlay').classList.add('visible');
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
+
+      for (let i = 0; i < 150; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 150,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tiltAngle: Math.random() * Math.PI,
+          tiltSpeed: Math.random() * 0.1 + 0.05
+        });
+      }
+
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.fillStyle = p.color;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tiltAngle);
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
+          ctx.restore();
+          p.y += 3 + Math.random() * 2;
+          p.x += Math.sin(p.d) * 0.5;
+          p.tiltAngle += p.tiltSpeed;
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+        frame++;
+        if (frame < 180) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      draw();
+    }
+
+    function showError(msg) {
+      document.getElementById('storyContainer').innerHTML = `<p style="text-align:center;color:var(--muted);padding:2rem;">${msg}</p>`;
+    }
+
+    function goBack() {
+      if (pagesRead > 0 && pagesRead < totalPages) {
+        Moksh.endSession(studentId, contentId);
+      }
+      if (studentId && studentId !== 'guest') {
+        window.location.href = `../dashboard.html?student=${studentId}`;
+      } else {
+        window.history.back();
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') goBack();
+    });
+
+    init();
+  </script>
+</body>
+</html>

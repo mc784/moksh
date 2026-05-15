@@ -213,7 +213,7 @@
 <body>
   <div class="ambient"></div>
 
-  <button class="parent-avatar" onclick="window.location.href='parent/'" title="Parent Dashboard">
+  <button class="parent-avatar" onclick="window.location.href='parent.html'" title="Parent Dashboard">
     👤
   </button>
 
@@ -287,7 +287,7 @@
         return;
       }
       Moksh.setCurrentUser(id);
-      window.location.href = `${id}/`;
+      window.location.href = `dashboard.html?student=${id}`;
     }
 
     initProfiles();

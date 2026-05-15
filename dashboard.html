@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --accent: #6366f1;
+      --success: #22c55e;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-back {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .nav-back:hover {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .profile-info h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .profile-streak {
+      font-size: 0.85rem;
+      color: #fb923c;
+      text-align: right;
+    }
+
+    .profile-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+    }
+
+    /* Subject Filter */
+    .subject-filter {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 1.5rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .subject-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 2px solid transparent;
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .subject-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .subject-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .subject-btn .icon {
+      font-size: 1.1rem;
+    }
+
+    /* Section */
+    .section {
+      padding: 0 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    /* Activity Grid */
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .activity-card {
+      position: relative;
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .activity-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--card-color, var(--accent));
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .activity-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-color, var(--accent));
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+
+    .activity-card:hover::before {
+      opacity: 1;
+    }
+
+    .activity-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .activity-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+
+    .activity-topic {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .activity-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .activity-badge.new {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+    }
+
+    .activity-badge.done {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--muted);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 1.1rem;
+    }
+
+    /* Mini Stats */
+    .stats-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      margin: 0 1.5rem 1.5rem;
+      background: var(--surface);
+      border-radius: 30px;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s;
+    }
+
+    .stats-mini:hover {
+      border-color: var(--accent);
+    }
+
+    .mini-stat {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .mini-stat span {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .mini-stat-arrow {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .activity-grid { grid-template-columns: repeat(2, 1fr); }
+      .activity-card { padding: 1rem; }
+      .activity-icon { font-size: 1.8rem; }
+      .activity-name { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="nav-back" onclick="goBack()" aria-label="Go back">←</button>
+    <div class="profile">
+      <div class="profile-info">
+        <h1 id="studentName">Loading...</h1>
+        <p class="profile-streak" id="studentStreak">🔥 0 days</p>
+      </div>
+      <img src="" alt="" class="profile-avatar" id="studentAvatar">
+    </div>
+  </header>
+
+  <div class="subject-filter" id="subjectFilter">
+    <!-- Subject buttons loaded dynamically -->
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Your Activities</h2>
+    <div class="activity-grid" id="activityGrid">
+      <!-- Activities loaded dynamically -->
+    </div>
+  </div>
+
+  <a href="#" class="stats-mini" id="statsLink">
+    <span class="mini-stat">📊 <span id="statSessions">0</span> sessions</span>
+    <span class="mini-stat">⏱️ <span id="statTime">0m</span></span>
+    <span class="mini-stat">🎯 <span id="statAccuracy">-</span></span>
+    <span class="mini-stat-arrow">→</span>
+  </a>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const studentId = params.get('student');
+
+    let catalog = null;
+    let allContent = [];
+    let studentData = null;
+    let currentSubject = 'all';
+
+    async function init() {
+      if (!studentId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Enable cloud sync
+      setTimeout(async () => {
+        if (window.MokshFirebase) {
+          await Moksh.enableCloudSync();
+          renderActivities(); // Re-render with cloud assignments
+        }
+      }, 1000);
+
+      try {
+        // Load catalog
+        const catalogRes = await fetch('data/catalog.json');
+        catalog = await catalogRes.json();
+
+        // Load content
+        const contentRes = await fetch('data/content.json');
+        const contentData = await contentRes.json();
+        allContent = contentData.content;
+
+        // Get student info
+        studentData = catalog.students[studentId];
+        if (!studentData) {
+          showError('Student not found');
+          return;
+        }
+
+        // Update header
+        document.getElementById('studentName').textContent = studentData.name;
+        document.getElementById('studentAvatar').src = studentData.avatar;
+        document.getElementById('studentAvatar').alt = studentData.name;
+        document.documentElement.style.setProperty('--accent', studentData.color);
+
+        // Render UI
+        renderSubjectFilter();
+        renderActivities();
+        renderStats();
+
+      } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to load');
+      }
+    }
+
+    function renderSubjectFilter() {
+      const container = document.getElementById('subjectFilter');
+      let html = `<button class="subject-btn active" data-subject="all" onclick="filterSubject('all')">
+        <span class="icon">📚</span> All
+      </button>`;
+
+      Object.values(catalog.subjects)
+        .sort((a, b) => a.order - b.order)
+        .forEach(subject => {
+          html += `
+            <button class="subject-btn" data-subject="${subject.id}" onclick="filterSubject('${subject.id}')" style="--btn-color: ${subject.color}">
+              <span class="icon">${subject.icon}</span> ${subject.name}
+            </button>
+          `;
+        });
+
+      container.innerHTML = html;
+    }
+
+    function filterSubject(subjectId) {
+      currentSubject = subjectId;
+
+      // Update button states
+      document.querySelectorAll('.subject-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.subject === subjectId);
+      });
+
+      renderActivities();
+    }
+
+    function renderActivities() {
+      const grid = document.getElementById('activityGrid');
+
+      // Get assigned content for this student
+      const assignments = Moksh.getAssignments(studentId);
+
+      // Filter content: only assigned items (or show empty state)
+      let filteredContent = allContent.filter(content => {
+        // Check if assigned
+        const isAssigned = assignments.length === 0 ? false : assignments.includes(content.id);
+        if (!isAssigned) return false;
+
+        // Filter by subject if selected
+        if (currentSubject !== 'all' && content.subject !== currentSubject) return false;
+
+        return true;
+      });
+
+      if (filteredContent.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No activities assigned yet!</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filteredContent.map(content => {
+        const subject = catalog.subjects[content.subject];
+        const topic = catalog.topics[content.topic];
+        const stats = Moksh.getActivityStats(studentId, content.id);
+        const isDone = stats && stats.attempts > 0;
+
+        // Determine URL based on format
+        let url = '';
+        if (content.format === 'flashcard') {
+          url = `learn/flashcard.html?id=${content.id}&student=${studentId}`;
+        } else if (content.format === 'story' || content.format === 'story-qa') {
+          url = `learn/story.html?id=${content.id}&student=${studentId}`;
+        }
+
+        return `
+          <a href="${url}" class="activity-card" style="--card-color: ${subject.color}">
+            ${isDone ? '<span class="activity-badge done">Done</span>' : '<span class="activity-badge new">New</span>'}
+            <div class="activity-icon">${content.icon || subject.icon}</div>
+            <div class="activity-name">${content.name}</div>
+            <div class="activity-topic">${topic ? topic.name : subject.name}</div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function renderStats() {
+      const stats = Moksh.getOverallStats(studentId);
+      if (stats) {
+        document.getElementById('statSessions').textContent = stats.totalSessions || 0;
+        document.getElementById('statTime').textContent = stats.totalTimeFormatted || '0m';
+        document.getElementById('statAccuracy').textContent = stats.overallAccuracy > 0 ? `${stats.overallAccuracy}%` : '-';
+        document.getElementById('studentStreak').textContent = stats.currentStreak > 0
+          ? `🔥 ${stats.currentStreak} day${stats.currentStreak > 1 ? 's' : ''}`
+          : '💤 Start streak!';
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('activityGrid').innerHTML = `
+        <div class="empty-state" style="grid-column: 1/-1;">
+          <p class="empty-state-text">${msg}</p>
+        </div>
+      `;
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    init();
+  </script>
+</body>
+</html>
