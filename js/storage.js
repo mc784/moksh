@@ -225,8 +225,8 @@ const Moksh = {
 
   isAssigned(childId, activityId) {
     const assignments = this.getAssignments(childId);
-    // Empty state: nothing visible until parent assigns
-    if (assignments.length === 0) return false;
+    // Show everything by default until parent assigns specific activities
+    if (assignments.length === 0) return true;
     return assignments.includes(activityId);
   },
 
