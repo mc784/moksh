@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Progress</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --accent: #ec4899;
+      --accent2: #6366f1;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--accent);
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Section */
+    .section {
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    /* Big Stats */
+    .big-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .big-stat {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .big-stat .value {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .big-stat .label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    .big-stat.streak .value {
+      background: linear-gradient(135deg, #fb923c, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Weekly Calendar */
+    .week-calendar {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: space-between;
+    }
+
+    .day {
+      flex: 1;
+      aspect-ratio: 1;
+      background: var(--surface);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .day.active {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: var(--success);
+    }
+
+    .day.today {
+      border-color: var(--accent);
+    }
+
+    .day-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .day-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Activity Breakdown */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .activity-item {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .activity-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      background: var(--surface2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activity-details {
+      flex: 1;
+    }
+
+    .activity-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .activity-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .activity-score {
+      text-align: right;
+    }
+
+    .activity-pct {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .activity-pct.low {
+      color: var(--warning);
+    }
+
+    .activity-best {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Accuracy Ring */
+    .accuracy-section {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 0 2rem 2rem;
+    }
+
+    .ring-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .ring-container svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring-container circle {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .ring-bg { stroke: rgba(255,255,255,0.1); }
+
+    .ring-fg {
+      stroke: var(--success);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s ease-out;
+    }
+
+    .ring-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .ring-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .ring-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .accuracy-details {
+      flex: 1;
+    }
+
+    .accuracy-details h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .accuracy-breakdown {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .breakdown-item {
+      text-align: center;
+    }
+
+    .breakdown-value {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .breakdown-value.correct { color: var(--success); }
+    .breakdown-value.wrong { color: #ef4444; }
+
+    .breakdown-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Badges */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+    }
+
+    .badge {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s;
+    }
+
+    .badge.earned {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--accent2);
+    }
+
+    .badge.locked {
+      opacity: 0.4;
+    }
+
+    .badge-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-desc {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 1rem; }
+      .section { padding: 0 1rem; }
+      .accuracy-section {
+        flex-direction: column;
+        margin: 0 1rem 2rem;
+        text-align: center;
+      }
+      .big-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="back-btn" onclick="window.history.back()">←</button>
+    <h1>My Progress</h1>
+  </header>
+
+  <div class="accuracy-section">
+    <div class="ring-container">
+      <svg width="120" height="120">
+        <circle class="ring-bg" cx="60" cy="60" r="50"/>
+        <circle class="ring-fg" id="accuracyRing" cx="60" cy="60" r="50"
+          stroke-dasharray="314" stroke-dashoffset="314"/>
+      </svg>
+      <div class="ring-text">
+        <div class="ring-value" id="accuracyValue">0%</div>
+        <div class="ring-label">Accuracy</div>
+      </div>
+    </div>
+    <div class="accuracy-details">
+      <h3>Overall Performance</h3>
+      <p style="color: var(--muted); font-size: 0.9rem;">Keep practicing to improve!</p>
+      <div class="accuracy-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-value correct" id="totalCorrect">0</div>
+          <div class="breakdown-label">Correct</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-value wrong" id="totalWrong">0</div>
+          <div class="breakdown-label">Wrong</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-value" id="totalQuestions">0</div>
+          <div class="breakdown-label">Total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="big-stats">
+      <div class="big-stat streak">
+        <div class="value" id="streakValue">0</div>
+        <div class="label">Day Streak 🔥</div>
+      </div>
+      <div class="big-stat">
+        <div class="value" id="sessionsValue">0</div>
+        <div class="label">Sessions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">This Week</h3>
+    <div class="week-calendar" id="weekCalendar">
+      <!-- Days rendered dynamically -->
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Activities</h3>
+    <div class="activity-list" id="activityList">
+      <!-- Activities rendered dynamically -->
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Badges</h3>
+    <div class="badges-grid" id="badgesGrid">
+      <!-- Badges rendered dynamically -->
+    </div>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script>
+    const userId = 'kainav';
+
+    const activityMeta = {
+      'times-tables': { name: 'Times Tables', icon: '⚡' },
+      'science': { name: 'Science Facts', icon: '🔬' },
+      'phonics-shchth': { name: 'sh · ch · th', icon: '📖' },
+      'phonics-stspsn': { name: 'st · sp · sn', icon: '📖' },
+      'phonics-trdrbrg': { name: 'tr · dr · br · gr', icon: '📖' },
+      'phonics-clblflpl': { name: 'cl · bl · fl · pl', icon: '📖' },
+      'phonics-ngnkmpnd': { name: 'ng · nk · mp · nd', icon: '📖' },
+      'story-bua': { name: 'Bua Ji Story', icon: '🧡' },
+      'story-noni': { name: 'Noni Mata Story', icon: '💜' },
+      'story-taya': { name: 'Taya Ji Story', icon: '💚' },
+      'story-dada': { name: 'Dada Dadi Story', icon: '❤️' },
+      'story-papa': { name: 'Papa Story', icon: '💙' }
+    };
+
+    const badges = [
+      { id: 'first-step', name: 'First Step', icon: '👣', desc: 'Complete 1 session', check: s => s.totalSessions >= 1 },
+      { id: 'streak-3', name: 'On Fire', icon: '🔥', desc: '3 day streak', check: s => s.currentStreak >= 3 },
+      { id: 'streak-7', name: 'Week Warrior', icon: '⚔️', desc: '7 day streak', check: s => s.currentStreak >= 7 },
+      { id: 'sessions-10', name: 'Dedicated', icon: '🎯', desc: '10 sessions', check: s => s.totalSessions >= 10 },
+      { id: 'sessions-50', name: 'Champion', icon: '🏆', desc: '50 sessions', check: s => s.totalSessions >= 50 },
+      { id: 'accuracy-90', name: 'Sharpshooter', icon: '🎯', desc: '90%+ accuracy', check: s => s.overallAccuracy >= 90 },
+      { id: 'time-30', name: 'Focused', icon: '⏱️', desc: '30 min total', check: s => (s.totalTimeSeconds || 0) >= 1800 },
+      { id: 'time-60', name: 'Scholar', icon: '📚', desc: '1 hour total', check: s => (s.totalTimeSeconds || 0) >= 3600 }
+    ];
+
+    function init() {
+      const profile = Moksh.getProfile(userId);
+      const stats = Moksh.getOverallStats(userId);
+
+      if (stats) {
+        renderOverallStats(stats, profile);
+        renderWeekCalendar(profile);
+        renderActivities(profile);
+        renderBadges(stats);
+      }
+    }
+
+    function renderOverallStats(stats, profile) {
+      // Accuracy ring
+      const accuracy = stats.overallAccuracy || 0;
+      const offset = 314 - (314 * (accuracy / 100));
+      document.getElementById('accuracyRing').style.strokeDashoffset = offset;
+      document.getElementById('accuracyValue').textContent = `${accuracy}%`;
+
+      // Breakdown
+      let totalCorrect = 0;
+      let totalQuestions = 0;
+      if (profile?.activities) {
+        Object.values(profile.activities).forEach(a => {
+          totalCorrect += a.totalCorrect || 0;
+          totalQuestions += a.totalQuestions || 0;
+        });
+      }
+      document.getElementById('totalCorrect').textContent = totalCorrect;
+      document.getElementById('totalWrong').textContent = totalQuestions - totalCorrect;
+      document.getElementById('totalQuestions').textContent = totalQuestions;
+
+      // Big stats
+      document.getElementById('streakValue').textContent = stats.currentStreak || 0;
+      document.getElementById('sessionsValue').textContent = stats.totalSessions || 0;
+    }
+
+    function renderWeekCalendar(profile) {
+      const container = document.getElementById('weekCalendar');
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+
+      // Get activity dates
+      const activeDates = new Set();
+      if (profile?.activities) {
+        Object.values(profile.activities).forEach(a => {
+          if (a.lastPlayed) {
+            activeDates.add(new Date(a.lastPlayed).toDateString());
+          }
+        });
+      }
+      if (profile?.stats?.lastActiveDate) {
+        activeDates.add(new Date(profile.stats.lastActiveDate).toDateString());
+      }
+
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - dayOfWeek + i);
+        const dateStr = date.toDateString();
+        const isActive = activeDates.has(dateStr);
+        const isToday = dateStr === today.toDateString();
+
+        html += `
+          <div class="day ${isActive ? 'active' : ''} ${isToday ? 'today' : ''}">
+            <span class="day-label">${days[i]}</span>
+            <span class="day-icon">${isActive ? '✓' : (isToday ? '○' : '·')}</span>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    function renderActivities(profile) {
+      const container = document.getElementById('activityList');
+      if (!profile?.activities || Object.keys(profile.activities).length === 0) {
+        container.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 2rem;">No activities yet. Start practicing!</p>';
+        return;
+      }
+
+      const sortedActivities = Object.entries(profile.activities)
+        .map(([id, data]) => ({ id, ...data }))
+        .sort((a, b) => (b.attempts || 0) - (a.attempts || 0));
+
+      container.innerHTML = sortedActivities.map(a => {
+        const meta = activityMeta[a.id] || { name: a.id, icon: '📝' };
+        const accuracy = a.totalQuestions > 0 ? Math.round((a.totalCorrect / a.totalQuestions) * 100) : 0;
+        const best = Math.round(a.bestAccuracy || 0);
+
+        return `
+          <div class="activity-item">
+            <div class="activity-icon">${meta.icon}</div>
+            <div class="activity-details">
+              <div class="activity-name">${meta.name}</div>
+              <div class="activity-meta">${a.attempts || 0} attempts · ${Moksh.formatTime(a.totalTimeSeconds || 0)}</div>
+            </div>
+            <div class="activity-score">
+              <div class="activity-pct ${accuracy < 70 ? 'low' : ''}">${accuracy}%</div>
+              <div class="activity-best">Best: ${best}%</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderBadges(stats) {
+      const container = document.getElementById('badgesGrid');
+
+      container.innerHTML = badges.map(b => {
+        const earned = b.check(stats);
+        return `
+          <div class="badge ${earned ? 'earned' : 'locked'}">
+            <div class="badge-icon">${earned ? b.icon : '🔒'}</div>
+            <div class="badge-name">${b.name}</div>
+            <div class="badge-desc">${b.desc}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>

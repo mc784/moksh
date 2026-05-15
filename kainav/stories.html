@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Story Time</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --accent: #6366f1;
+      --success: #22c55e;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .close-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: var(--accent);
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .header-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Story Container */
+    .story-container {
+      flex: 1;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .story-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .story-emoji {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .story-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .story-subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* Phonics Section */
+    .phonics-section {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .phonics-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .word-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .word-card:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent);
+    }
+
+    .word-card.spoken {
+      border-color: var(--success);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .word-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .word-highlight {
+      color: var(--accent);
+    }
+
+    .word-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Story Content */
+    .story-content {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 2rem;
+      line-height: 1.8;
+      font-size: 1.2rem;
+    }
+
+    .story-content p {
+      margin-bottom: 1.5rem;
+    }
+
+    .story-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Audio Button */
+    .speak-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .speak-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .speak-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Progress indicator */
+    .progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* Complete overlay */
+    .complete-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 300;
+    }
+
+    .complete-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .complete-emoji {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+    }
+
+    .complete-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .complete-btn {
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .story-container { padding: 1rem; }
+      .story-title { font-size: 1.5rem; }
+      .word-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <header class="header">
+    <button class="close-btn" onclick="goBack()">←</button>
+    <span class="header-title" id="headerTitle">Story</span>
+    <span class="header-icon" id="headerIcon"></span>
+  </header>
+
+  <div class="story-container" id="storyContainer">
+    <!-- Content loaded dynamically -->
+  </div>
+
+  <button class="speak-btn" id="speakBtn" onclick="speakContent()">🔊</button>
+
+  <div class="complete-overlay" id="completeOverlay">
+    <div class="complete-emoji">🌟</div>
+    <div class="complete-text">Great reading!</div>
+    <button class="complete-btn" onclick="goBack()">Done</button>
+  </div>
+
+  <canvas id="confetti" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:400;"></canvas>
+
+  <script src="../js/storage.js"></script>
+  <script>
+    const userId = 'kainav';
+    const urlParams = new URLSearchParams(window.location.search);
+    const storyId = urlParams.get('story') || 'bua';
+
+    let wordsSpoken = 0;
+    let totalWords = 0;
+    let speechSynth = window.speechSynthesis;
+
+    // Story/Phonics data
+    const content = {
+      // Phonics flashcards (word cards to tap and hear)
+      cards_shchth: {
+        type: 'phonics',
+        title: 'sh · ch · th',
+        icon: '🔤',
+        subtitle: 'Tap each word to hear it!',
+        words: [
+          { word: 'ship', highlight: 'sh', hint: 'a boat' },
+          { word: 'shop', highlight: 'sh', hint: 'a store' },
+          { word: 'fish', highlight: 'sh', hint: 'swims in water' },
+          { word: 'wish', highlight: 'sh', hint: 'hope for' },
+          { word: 'chip', highlight: 'ch', hint: 'a snack' },
+          { word: 'chin', highlight: 'ch', hint: 'below your mouth' },
+          { word: 'much', highlight: 'ch', hint: 'a lot' },
+          { word: 'rich', highlight: 'ch', hint: 'has money' },
+          { word: 'this', highlight: 'th', hint: 'not that' },
+          { word: 'that', highlight: 'th', hint: 'not this' },
+          { word: 'with', highlight: 'th', hint: 'together' },
+          { word: 'path', highlight: 'th', hint: 'a trail' }
+        ]
+      },
+      cards_stspsn: {
+        type: 'phonics',
+        title: 'st · sp · sn',
+        icon: '🔤',
+        subtitle: 'Tap each word to hear it!',
+        words: [
+          { word: 'stop', highlight: 'st', hint: 'halt' },
+          { word: 'step', highlight: 'st', hint: 'walk' },
+          { word: 'star', highlight: 'st', hint: 'in the sky' },
+          { word: 'fast', highlight: 'st', hint: 'quick' },
+          { word: 'spin', highlight: 'sp', hint: 'turn around' },
+          { word: 'spot', highlight: 'sp', hint: 'see or a dot' },
+          { word: 'spoon', highlight: 'sp', hint: 'for eating' },
+          { word: 'spell', highlight: 'sp', hint: 'write letters' },
+          { word: 'snap', highlight: 'sn', hint: 'quick break' },
+          { word: 'snack', highlight: 'sn', hint: 'small food' },
+          { word: 'snow', highlight: 'sn', hint: 'cold white' },
+          { word: 'snug', highlight: 'sn', hint: 'cozy' }
+        ]
+      },
+      cards_trdrbrg: {
+        type: 'phonics',
+        title: 'tr · dr · br · gr',
+        icon: '🔤',
+        subtitle: 'Tap each word to hear it!',
+        words: [
+          { word: 'trip', highlight: 'tr', hint: 'journey' },
+          { word: 'tree', highlight: 'tr', hint: 'has leaves' },
+          { word: 'trap', highlight: 'tr', hint: 'to catch' },
+          { word: 'drum', highlight: 'dr', hint: 'bang bang' },
+          { word: 'drip', highlight: 'dr', hint: 'water drop' },
+          { word: 'draw', highlight: 'dr', hint: 'make art' },
+          { word: 'brick', highlight: 'br', hint: 'red block' },
+          { word: 'brush', highlight: 'br', hint: 'for hair' },
+          { word: 'bread', highlight: 'br', hint: 'toast' },
+          { word: 'green', highlight: 'gr', hint: 'grass color' },
+          { word: 'grin', highlight: 'gr', hint: 'big smile' },
+          { word: 'grab', highlight: 'gr', hint: 'take hold' }
+        ]
+      },
+      cards_clblflpl: {
+        type: 'phonics',
+        title: 'cl · bl · fl · pl',
+        icon: '🔤',
+        subtitle: 'Tap each word to hear it!',
+        words: [
+          { word: 'clap', highlight: 'cl', hint: 'hands together' },
+          { word: 'clock', highlight: 'cl', hint: 'tells time' },
+          { word: 'climb', highlight: 'cl', hint: 'go up' },
+          { word: 'blow', highlight: 'bl', hint: 'push air' },
+          { word: 'blue', highlight: 'bl', hint: 'sky color' },
+          { word: 'blend', highlight: 'bl', hint: 'mix together' },
+          { word: 'flip', highlight: 'fl', hint: 'turn over' },
+          { word: 'flag', highlight: 'fl', hint: 'waves high' },
+          { word: 'flat', highlight: 'fl', hint: 'not bumpy' },
+          { word: 'plant', highlight: 'pl', hint: 'grows' },
+          { word: 'play', highlight: 'pl', hint: 'have fun' },
+          { word: 'plum', highlight: 'pl', hint: 'purple fruit' }
+        ]
+      },
+      cards_ngnkmpnd: {
+        type: 'phonics',
+        title: 'ng · nk · mp · nd',
+        icon: '🔤',
+        subtitle: 'Tap each word to hear it!',
+        words: [
+          { word: 'ring', highlight: 'ng', hint: 'ding dong' },
+          { word: 'sing', highlight: 'ng', hint: 'make music' },
+          { word: 'king', highlight: 'ng', hint: 'wears crown' },
+          { word: 'sink', highlight: 'nk', hint: 'wash hands' },
+          { word: 'pink', highlight: 'nk', hint: 'light red' },
+          { word: 'think', highlight: 'nk', hint: 'use brain' },
+          { word: 'jump', highlight: 'mp', hint: 'hop up' },
+          { word: 'bump', highlight: 'mp', hint: 'hit softly' },
+          { word: 'lamp', highlight: 'mp', hint: 'gives light' },
+          { word: 'sand', highlight: 'nd', hint: 'at beach' },
+          { word: 'hand', highlight: 'nd', hint: 'has fingers' },
+          { word: 'pond', highlight: 'nd', hint: 'small lake' }
+        ]
+      },
+
+      // Phonics stories (narrative with highlighted sounds)
+      shchth: {
+        type: 'phonics-story',
+        title: 'The Shop for Chips!',
+        icon: '📖',
+        subtitle: 'Focus: sh · ch · th',
+        pages: [
+          { text: '"Let us go to <b>th</b>e <b>sh</b>op," says Mom.', emoji: '🛒' },
+          { text: 'I put on my <b>sh</b>oes. I <b>sh</b>ut <b>th</b>e door.', emoji: '👟🚪' },
+          { text: 'We walk on <b>th</b>e pa<b>th</b>. I see a <b>sh</b>ell!', emoji: '🐚' },
+          { text: 'At <b>th</b>e <b>sh</b>op, I pick <b>ch</b>ips and <b>ch</b>eese.', emoji: '🍟🧀' },
+          { text: 'Mom gets a bun<b>ch</b> of <b>ch</b>erries. Yum!', emoji: '🍒' },
+          { text: '"Can I have <b>ch</b>ocolate?" I ask wi<b>th</b> a grin.', emoji: '🍫😁' },
+          { text: 'Mom says, "<b>Sh</b>! Not too mu<b>ch</b>!"', emoji: '🤫' },
+          { text: 'We pay and <b>th</b>ank <b>th</b>e man at <b>th</b>e till.', emoji: '💰👋' },
+          { text: 'Back home, I mun<b>ch</b> my <b>ch</b>ips on <b>th</b>e mat.', emoji: '😋🏠' },
+          { text: '"<b>Th</b>at was fun!" I say. Mom gives me a big hug.', emoji: '🤗💛' }
+        ]
+      },
+      stspsn: {
+        type: 'phonics-story',
+        title: 'Stop, Spin, Snap!',
+        icon: '📖',
+        subtitle: 'Focus: st · sp · sn',
+        pages: [
+          { text: 'I <b>st</b>and up. I <b>st</b>retch. Time to play!', emoji: '🧍‍♀️🙆‍♀️' },
+          { text: 'I run fa<b>st</b>. Dad says, "<b>St</b>op!"', emoji: '🏃‍♀️✋' },
+          { text: 'I <b>sp</b>in and <b>sp</b>in. The park is a blur!', emoji: '🌀😵‍💫' },
+          { text: 'I <b>sp</b>ot a <b>sn</b>ail on a <b>st</b>ump.', emoji: '🐌🪵' },
+          { text: 'I <b>st</b>ep soft. I do not want to <b>st</b>ep on it!', emoji: '🦶👀' },
+          { text: 'Dad and I play <b>Sn</b>ap! I am fa<b>st</b>. I win!', emoji: '🃏🏆' },
+          { text: 'We have a <b>sn</b>ack. I eat a <b>sp</b>icy <b>sn</b>ack mix.', emoji: '🌶️🥨' },
+          { text: 'The <b>st</b>ars come out. I <b>st</b>are up at them.', emoji: '🌟🌙' },
+          { text: 'I feel <b>sn</b>ug in bed. What a fun day!', emoji: '🛏️😊' }
+        ]
+      },
+      trdrbrg: {
+        type: 'phonics-story',
+        title: 'A Trip to the Park!',
+        icon: '📖',
+        subtitle: 'Focus: tr · dr · br · gr',
+        pages: [
+          { text: 'We go on a <b>tr</b>ip! I <b>gr</b>ab my bag.', emoji: '🎒🚶‍♀️' },
+          { text: 'I <b>br</b>ush my teeth. <b>Dr</b>ip <b>dr</b>ip goes the tap.', emoji: '🪥💧' },
+          { text: 'We <b>tr</b>ot down the <b>tr</b>ail. The <b>gr</b>ass is wet.', emoji: '🌿🥾' },
+          { text: 'I <b>tr</b>ip on a <b>br</b>anch! But I do not fall.', emoji: '🌳😅' },
+          { text: 'A <b>gr</b>een frog hops. I <b>gr</b>in at it.', emoji: '🐸😁' },
+          { text: 'I <b>dr</b>aw the frog on a pad. It looks <b>gr</b>eat!', emoji: '🎨✏️' },
+          { text: 'We eat <b>br</b>ead and jam on a <b>br</b>ick wall.', emoji: '🍞🧱' },
+          { text: 'I beat a <b>dr</b>um. Boom boom boom!', emoji: '🥁🎶' },
+          { text: 'What a <b>gr</b>and <b>tr</b>ip! I can not wait to go back.', emoji: '💚🌳' }
+        ]
+      },
+      clblflpl: {
+        type: 'phonics-story',
+        title: 'Clap, Blow, Flip, Plop!',
+        icon: '📖',
+        subtitle: 'Focus: cl · bl · fl · pl',
+        pages: [
+          { text: 'I <b>cl</b>ap my hands. One, two, three!', emoji: '👏🎵' },
+          { text: 'I <b>bl</b>ow up a red <b>bl</b>oon. Pop!', emoji: '🎈💥' },
+          { text: 'The <b>fl</b>ag goes <b>fl</b>ap <b>fl</b>ap in the wind.', emoji: '🚩💨' },
+          { text: 'I <b>pl</b>ant a seed in the mud. <b>Pl</b>op!', emoji: '🌱🪴' },
+          { text: 'Mom makes a <b>pl</b>um cake. I <b>cl</b>ean the bowl.', emoji: '🍰🥣' },
+          { text: 'I <b>fl</b>ip a pancake up high. I catch it!', emoji: '🥞🙌' },
+          { text: 'The <b>cl</b>ock goes tick tock. Time to <b>pl</b>ay!', emoji: '🕐⏰' },
+          { text: 'I <b>bl</b>end red and <b>bl</b>ue. I get purple!', emoji: '🎨💜' },
+          { text: 'I <b>cl</b>imb in bed. I <b>fl</b>uff my <b>pl</b>ow. Good night!', emoji: '🛏️😴' }
+        ]
+      },
+      ngnkmpnd: {
+        type: 'phonics-story',
+        title: 'Ring, Sink, Jump, Sand!',
+        icon: '📖',
+        subtitle: 'Focus: ng · nk · mp · nd',
+        pages: [
+          { text: 'I hear the bell ri<b>ng</b>. Time to go out!', emoji: '🔔🏃‍♀️' },
+          { text: 'I si<b>ng</b> a so<b>ng</b> as I skip alo<b>ng</b>.', emoji: '🎤🎶' },
+          { text: 'I ju<b>mp</b> in a puddle. Splash! My feet are wet.', emoji: '💦🦶' },
+          { text: 'I bu<b>mp</b> into Dad. He holds my ha<b>nd</b>.', emoji: '🤝👨' },
+          { text: 'We fi<b>nd</b> a po<b>nd</b>. A duck swims rou<b>nd</b> a<b>nd</b> rou<b>nd</b>.', emoji: '🦆🌊' },
+          { text: 'I thi<b>nk</b> I see a fish si<b>nk</b> down deep.', emoji: '🐟👀' },
+          { text: 'We play in the sa<b>nd</b>. I make a la<b>mp</b> from mud!', emoji: '🏖️🪔' },
+          { text: 'I sta<b>mp</b> my feet. Ba<b>ng</b> ba<b>ng</b> ba<b>ng</b>!', emoji: '🦶💥' },
+          { text: 'The ki<b>ng</b> of the sa<b>nd</b>pit — that is me! I tha<b>nk</b> Dad for a fun day.', emoji: '👑🧡' }
+        ]
+      },
+
+      // Family stories
+      bua: {
+        type: 'story',
+        title: 'Bua Ji',
+        icon: '🧡',
+        subtitle: 'We visit Bua Ji!',
+        paragraphs: [
+          "Today we go to Bua Ji's house! I am so excited. Bua Ji always gives the best hugs.",
+          "We take the car. Papa drives. I look out the window and count the trees. One, two, three...",
+          "Bua Ji's house has a big garden. There are roses and sunflowers. I help water the plants.",
+          "We eat yummy food together. Bua Ji makes my favorite - aloo paratha! So delicious.",
+          "Before we leave, Bua Ji gives me a gift. It's a beautiful book with pictures of animals.",
+          "I love visiting Bua Ji. She makes everything feel special!"
+        ]
+      },
+      noni: {
+        type: 'story',
+        title: 'Noni Mata',
+        icon: '💜',
+        subtitle: 'Noni Mata is here!',
+        paragraphs: [
+          "Noni Mata came to visit today! I ran to the door so fast when the bell rang.",
+          "She brought a big bag. What's inside? Surprises for everyone!",
+          "Noni Mata tells the best stories. She knows about kings and queens and magical forests.",
+          "We sit together on the sofa. She teaches me how to braid hair.",
+          "At night, Noni Mata sings songs. Her voice is so soft and sweet.",
+          "I wish Noni Mata could stay forever. I love her so much!"
+        ]
+      },
+      taya: {
+        type: 'story',
+        title: 'Taya Ji',
+        icon: '💚',
+        subtitle: 'Fun with Taya Ji!',
+        paragraphs: [
+          "Taya Ji is so funny! He always makes everyone laugh.",
+          "Today Taya Ji took me to the park. We played on the swings and slides.",
+          "He taught me to fly a kite. Up, up, up it goes into the blue sky!",
+          "Taya Ji knows magic tricks. He can make coins disappear!",
+          "We had ice cream together. I chose chocolate, he chose mango.",
+          "Playing with Taya Ji is always an adventure!"
+        ]
+      },
+      dada: {
+        type: 'story',
+        title: 'Dada Dadi',
+        icon: '❤️',
+        subtitle: "Grandparents' room",
+        paragraphs: [
+          "Dada Dadi's room is my favorite place in the whole house.",
+          "Dadi keeps special treats in a tin box. She gives me one every day!",
+          "Dada reads the newspaper. Sometimes he reads to me about animals and stars.",
+          "We look at old photo albums together. There are pictures of Papa when he was small like me!",
+          "Dadi teaches me prayers. We close our eyes and say them together.",
+          "I feel so loved when I'm with Dada and Dadi!"
+        ]
+      },
+      papa: {
+        type: 'story',
+        title: 'Papa',
+        icon: '💙',
+        subtitle: 'My Papa!',
+        paragraphs: [
+          "Papa is my superhero! He can do anything.",
+          "In the morning, Papa makes breakfast. Eggs and toast - just the way I like it.",
+          "Papa helps me with homework. He explains things so I understand.",
+          "On weekends, we go for bike rides. Wind in my hair, Papa by my side!",
+          "Papa gives the best shoulder rides. I can touch the ceiling!",
+          "I want to be just like Papa when I grow up!"
+        ]
+      },
+
+      // Hindi Stories
+      ganesh: {
+        type: 'hindi-story',
+        title: 'गणेश जी जीते',
+        icon: '🙏',
+        subtitle: 'Ganesh Ji Wins',
+        graphic: '🐘',
+        paragraphs: [
+          "एक बार शिव जी के पास मीठा फल था। दोनों बेटे — गणेश और कार्तिकेय — उसे चाहते थे।",
+          "शिव जी बोले, \"जो पहले दुनिया का चक्कर लगाकर आएगा, फल उसी का।\"",
+          "कार्तिकेय झट मोर पर बैठे और उड़ चले — पहाड़, नदी, जंगल पार करते गए।",
+          "गणेश जी ने नन्हे चूहे को देखा। सोचा, मुस्कुराए। फिर माँ-बाप के चारों ओर तीन चक्कर लगाए और बोले, \"माँ-पिता ही मेरी पूरी दुनिया हैं।\"",
+          "शिव जी हँसे, पार्वती जी की आँखें भर आईं। फल गणेश जी को मिला।",
+          "थोड़ी देर बाद कार्तिकेय थके-हारे लौटे — देखा तो भैया आराम से फल खा रहे थे!",
+          "तभी से हर शुभ काम में सबसे पहले गणेश जी को याद किया जाता है।"
+        ]
+      },
+      krishna: {
+        type: 'hindi-story',
+        title: 'कृष्ण जी और माखन',
+        icon: '🙏',
+        subtitle: 'Krishna and Butter',
+        graphic: '🧈',
+        paragraphs: [
+          "नन्हे कृष्ण जी बहुत शरारती थे। उन्हें माखन बहुत पसंद था।",
+          "माँ यशोदा माखन को ऊँचे मटके में छुपा देती थीं। पर कृष्ण जी चुप कहाँ बैठते!",
+          "उन्होंने अपने दोस्तों को बुलाया। सब मिलकर एक के ऊपर एक चढ़े। कृष्ण जी सबसे ऊपर पहुँचे और मटका फोड़ दिया।",
+          "माखन गिरा, सब हँसे, कृष्ण जी ने मुँह भर के खाया।",
+          "तभी माँ आ गईं! कृष्ण जी ने मीठी मुस्कान दी। माँ का गुस्सा पल में पिघल गया।",
+          "आज भी जन्माष्टमी पर बच्चे यही \"दही-हांडी\" खेल खेलते हैं।"
+        ]
+      }
+    };
+
+    function init() {
+      const data = content[storyId];
+      if (!data) {
+        document.getElementById('storyContainer').innerHTML = '<p>Story not found</p>';
+        return;
+      }
+
+      document.getElementById('headerTitle').textContent = data.title;
+      document.getElementById('headerIcon').textContent = data.icon;
+
+      if (data.type === 'phonics') {
+        renderPhonics(data);
+      } else if (data.type === 'phonics-story') {
+        renderPhonicsStory(data);
+      } else if (data.type === 'hindi-story') {
+        renderHindiStory(data);
+      } else {
+        renderStory(data);
+      }
+
+      // Start tracking
+      Moksh.startSession(userId, `phonics-${storyId}`);
+    }
+
+    function renderPhonics(data) {
+      const container = document.getElementById('storyContainer');
+      totalWords = data.words.length;
+
+      container.innerHTML = `
+        <div class="story-header">
+          <div class="story-emoji">${data.icon}</div>
+          <h1 class="story-title">${data.title}</h1>
+          <p class="story-subtitle">${data.subtitle}</p>
+        </div>
+        <div class="phonics-section">
+          <h2 class="phonics-title">Tap each word to hear it!</h2>
+          <div class="word-grid" id="wordGrid">
+            ${data.words.map((w, i) => `
+              <div class="word-card" data-index="${i}" onclick="speakWord(${i})">
+                <div class="word-text">${highlightWord(w.word, w.highlight)}</div>
+                <div class="word-hint">${w.hint}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPhonicsStory(data) {
+      const container = document.getElementById('storyContainer');
+      totalWords = data.pages.length;
+
+      container.innerHTML = `
+        <div class="story-header">
+          <div class="story-emoji">${data.icon}</div>
+          <h1 class="story-title">${data.title}</h1>
+          <p class="story-subtitle">${data.subtitle}</p>
+        </div>
+        <div class="phonics-story-pages">
+          ${data.pages.map((page, i) => `
+            <div class="phonics-page" data-index="${i}" onclick="markPageRead(${i})">
+              <p class="page-text">${page.text}</p>
+              <span class="page-emoji">${page.emoji}</span>
+            </div>
+          `).join('')}
+        </div>
+        <p class="the-end">The End ✨</p>
+      `;
+
+      // Add styles for phonics story pages
+      const style = document.createElement('style');
+      style.textContent = `
+        .phonics-story-pages {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .phonics-page {
+          background: var(--surface);
+          border-radius: 16px;
+          padding: 1.5rem;
+          border-left: 5px solid var(--accent);
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .phonics-page:hover {
+          transform: translateX(4px);
+          border-left-color: var(--success);
+        }
+        .phonics-page.read {
+          border-left-color: var(--success);
+          background: rgba(34, 197, 94, 0.1);
+        }
+        .page-text {
+          font-size: 1.4rem;
+          line-height: 1.8;
+          margin-bottom: 0.5rem;
+        }
+        .page-text b {
+          color: var(--accent);
+          font-weight: 700;
+        }
+        .page-emoji {
+          font-size: 2rem;
+          display: block;
+          text-align: center;
+          margin-top: 0.5rem;
+        }
+        .the-end {
+          text-align: center;
+          font-size: 1.5rem;
+          color: var(--accent);
+          margin-top: 2rem;
+          font-style: italic;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function markPageRead(index) {
+      const data = content[storyId];
+      const page = document.querySelector(`.phonics-page[data-index="${index}"]`);
+
+      if (!page.classList.contains('read')) {
+        page.classList.add('read');
+        wordsSpoken++;
+        Moksh.recordAnswer(userId, `phonics-${storyId}`, true);
+        updateProgress();
+
+        // Speak the page text (strip HTML)
+        const text = data.pages[index].text.replace(/<[^>]*>/g, '');
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        speechSynth.speak(utterance);
+      }
+
+      // Check completion
+      if (wordsSpoken === totalWords) {
+        setTimeout(showComplete, 1000);
+      }
+    }
+
+    function highlightWord(word, highlight) {
+      const idx = word.toLowerCase().indexOf(highlight.toLowerCase());
+      if (idx === -1) return word;
+      return word.slice(0, idx) +
+             `<span class="word-highlight">${word.slice(idx, idx + highlight.length)}</span>` +
+             word.slice(idx + highlight.length);
+    }
+
+    function speakWord(index) {
+      const data = content[storyId];
+      const word = data.words[index];
+
+      // Mark as spoken
+      const card = document.querySelector(`[data-index="${index}"]`);
+      if (!card.classList.contains('spoken')) {
+        card.classList.add('spoken');
+        wordsSpoken++;
+        Moksh.recordAnswer(userId, `phonics-${storyId}`, true);
+        updateProgress();
+      }
+
+      // Speak the word
+      const utterance = new SpeechSynthesisUtterance(word.word);
+      utterance.rate = 0.8;
+      speechSynth.speak(utterance);
+
+      // Check completion
+      if (wordsSpoken === totalWords) {
+        setTimeout(showComplete, 500);
+      }
+    }
+
+    function renderStory(data) {
+      const container = document.getElementById('storyContainer');
+      totalWords = data.paragraphs.length;
+
+      container.innerHTML = `
+        <div class="story-header">
+          <div class="story-emoji">${data.icon}</div>
+          <h1 class="story-title">${data.title}</h1>
+          <p class="story-subtitle">${data.subtitle}</p>
+        </div>
+        <div class="story-content">
+          ${data.paragraphs.map(p => `<p>${p}</p>`).join('')}
+        </div>
+      `;
+
+      // Auto-mark as complete when read
+      setTimeout(() => {
+        wordsSpoken = totalWords;
+        Moksh.recordAnswer(userId, `story-${storyId}`, true);
+        updateProgress();
+      }, 3000);
+    }
+
+    function renderHindiStory(data) {
+      const container = document.getElementById('storyContainer');
+      totalWords = data.paragraphs.length;
+
+      container.innerHTML = `
+        <div class="hindi-story">
+          <div class="hindi-header">
+            <div class="hindi-graphic">${data.graphic}</div>
+            <h1 class="hindi-title">${data.title}</h1>
+            <p class="hindi-subtitle">${data.subtitle}</p>
+          </div>
+          <div class="hindi-content">
+            ${data.paragraphs.map((p, i) => `
+              <div class="hindi-para" style="animation-delay: ${i * 0.1}s">
+                <span class="hindi-bullet">॥</span>
+                <p>${p}</p>
+              </div>
+            `).join('')}
+          </div>
+          <div class="hindi-footer">
+            <span>॥ इति कथा समाप्त ॥</span>
+          </div>
+        </div>
+      `;
+
+      // Add Hindi styles
+      const style = document.createElement('style');
+      style.textContent = `
+        @import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
+
+        .hindi-story {
+          max-width: 700px;
+          margin: 0 auto;
+        }
+
+        .hindi-header {
+          text-align: center;
+          margin-bottom: 2.5rem;
+          padding: 2rem;
+          background: linear-gradient(135deg, rgba(255,153,51,0.15), rgba(255,255,255,0.05));
+          border-radius: 20px;
+          border: 2px solid rgba(255,153,51,0.3);
+        }
+
+        .hindi-graphic {
+          font-size: 5rem;
+          margin-bottom: 1rem;
+          filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .hindi-title {
+          font-family: 'Tiro Devanagari Hindi', serif;
+          font-size: 2.5rem;
+          font-weight: 400;
+          color: #ff9933;
+          margin-bottom: 0.5rem;
+          text-shadow: 0 2px 10px rgba(255,153,51,0.3);
+        }
+
+        .hindi-subtitle {
+          color: var(--muted);
+          font-size: 1rem;
+          font-style: italic;
+        }
+
+        .hindi-content {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .hindi-para {
+          display: flex;
+          gap: 1rem;
+          align-items: flex-start;
+          padding: 1.5rem;
+          background: var(--surface);
+          border-radius: 16px;
+          border-left: 4px solid #ff9933;
+          animation: fadeInUp 0.5s ease both;
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .hindi-bullet {
+          color: #ff9933;
+          font-size: 1.5rem;
+          font-family: 'Tiro Devanagari Hindi', serif;
+          flex-shrink: 0;
+          margin-top: 0.2rem;
+        }
+
+        .hindi-para p {
+          font-family: 'Tiro Devanagari Hindi', serif;
+          font-size: 1.4rem;
+          line-height: 2.2;
+          color: #fff;
+          margin: 0;
+          letter-spacing: 0.02em;
+        }
+
+        .hindi-footer {
+          text-align: center;
+          margin-top: 2.5rem;
+          padding: 1.5rem;
+          font-family: 'Tiro Devanagari Hindi', serif;
+          font-size: 1.3rem;
+          color: #ff9933;
+          border-top: 1px solid rgba(255,153,51,0.3);
+          border-bottom: 1px solid rgba(255,153,51,0.3);
+        }
+
+        @media (max-width: 600px) {
+          .hindi-title { font-size: 1.8rem; }
+          .hindi-para p { font-size: 1.2rem; line-height: 2; }
+          .hindi-graphic { font-size: 4rem; }
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Auto-mark as complete when read
+      setTimeout(() => {
+        wordsSpoken = totalWords;
+        Moksh.recordAnswer(userId, `hindi-${storyId}`, true);
+        updateProgress();
+        showComplete();
+      }, 5000);
+    }
+
+    function updateProgress() {
+      const pct = totalWords > 0 ? (wordsSpoken / totalWords) * 100 : 0;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+    }
+
+    function speakContent() {
+      const data = content[storyId];
+      let text = '';
+      if (data.type === 'story') {
+        text = data.paragraphs.join(' ');
+      } else if (data.type === 'phonics-story') {
+        text = data.pages.map(p => p.text.replace(/<[^>]*>/g, '')).join(' ');
+      }
+      if (text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        speechSynth.speak(utterance);
+      }
+    }
+
+    function showComplete() {
+      Moksh.endSession(userId, `phonics-${storyId}`);
+      document.getElementById('completeOverlay').classList.add('visible');
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
+
+      for (let i = 0; i < 150; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 150,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: Math.random() * Math.PI,
+          tiltSpeed: Math.random() * 0.1 + 0.05
+        });
+      }
+
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tiltAngle);
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
+          ctx.restore();
+
+          p.y += 3 + Math.random() * 2;
+          p.x += Math.sin(p.d) * 0.5;
+          p.tiltAngle += p.tiltSpeed;
+
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+
+        frame++;
+        if (frame < 180) {
+          requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      draw();
+    }
+
+    function goBack() {
+      // Save any incomplete session
+      if (wordsSpoken > 0 && wordsSpoken < totalWords) {
+        Moksh.endSession(userId, `phonics-${storyId}`);
+      }
+      window.history.back();
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') goBack();
+    });
+
+    init();
+  </script>
+</body>
+</html>

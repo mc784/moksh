@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parent Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --accent: #8b5cf6;
+      --text: #ffffff;
+      --muted: #71717a;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--accent);
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section {
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    /* Kids Overview */
+    .kids-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .kid-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s;
+    }
+
+    .kid-card:hover {
+      border-color: var(--accent);
+    }
+
+    .kid-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .kid-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+    }
+
+    .kid-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .kid-streak {
+      font-size: 0.8rem;
+      color: #fb923c;
+    }
+
+    .kid-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .kid-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .assigned-count {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    /* Assignment Manager */
+    .assignment-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 1.5rem;
+      min-height: 400px;
+    }
+
+    .activity-list {
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding-right: 1.5rem;
+    }
+
+    .activity-list h3 {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem;
+      background: var(--surface2);
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      cursor: grab;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .activity-item:hover {
+      border-color: var(--accent);
+    }
+
+    .activity-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+
+    .activity-item .icon {
+      font-size: 1.5rem;
+    }
+
+    .activity-item .info {
+      flex: 1;
+    }
+
+    .activity-item .name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .activity-item .type {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .activity-item .open-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: all 0.2s;
+    }
+
+    .activity-item:hover .open-btn {
+      opacity: 1;
+    }
+
+    .activity-item .open-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Child columns */
+    .children-columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .child-column {
+      background: var(--surface2);
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 300px;
+      transition: all 0.2s;
+    }
+
+    .child-column.drag-over {
+      background: rgba(139, 92, 246, 0.1);
+      border: 2px dashed var(--accent);
+    }
+
+    .child-column-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .child-column-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .child-column-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .assigned-activities {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .assigned-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem;
+      background: var(--surface);
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+
+    .assigned-item .icon {
+      font-size: 1.2rem;
+    }
+
+    .assigned-item .remove {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      border: none;
+      color: var(--error);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .assigned-item:hover .remove {
+      opacity: 1;
+    }
+
+    .drop-hint {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .action-btn.secondary {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .assignment-grid {
+        grid-template-columns: 1fr;
+      }
+      .activity-list {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-right: 0;
+        padding-bottom: 1.5rem;
+      }
+      .children-columns {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 1rem; }
+      .section { padding: 0 1rem; }
+      .children-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="back-btn" onclick="window.location.href='../'">←</button>
+    <h1>👨‍👩‍👧‍👦 Parent Dashboard</h1>
+    <div></div>
+  </header>
+
+  <div class="section">
+    <h3 class="section-title">Kids Overview</h3>
+    <div class="kids-overview" id="kidsOverview"></div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="quick-actions">
+      <button class="action-btn primary" onclick="assignAllToAll()">📚 Assign All to Everyone</button>
+      <button class="action-btn secondary" onclick="clearAllAssignments()">🗑️ Clear All Assignments</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Assign Activities</h3>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
+      Hover and click ▶ to preview any activity. Drag activities to assign them to children.
+    </p>
+    <div class="assignment-grid">
+      <div class="activity-list">
+        <h3>All Activities</h3>
+        <div id="activityList"></div>
+      </div>
+      <div class="children-columns" id="childrenColumns"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved!</div>
+
+  <script src="../js/storage.js"></script>
+  <script>
+    // All available activities with URLs for preview
+    const allActivities = [
+      // Flashcards
+      { id: 'times-tables', name: 'Times Tables', icon: '⚡', type: 'Flashcard', url: '../shivaya/drills.html?drill=times-tables' },
+      { id: 'science', name: 'Science Facts', icon: '🔬', type: 'Flashcard', url: '../shivaya/drills.html?drill=science' },
+      { id: 'cards-shchth', name: 'sh · ch · th', icon: '🔤', type: 'Flashcard', url: '../shivaya/stories.html?story=cards_shchth' },
+      { id: 'cards-stspsn', name: 'st · sp · sn', icon: '🔤', type: 'Flashcard', url: '../shivaya/stories.html?story=cards_stspsn' },
+      { id: 'cards-trdrbrg', name: 'tr · dr · br · gr', icon: '🔤', type: 'Flashcard', url: '../shivaya/stories.html?story=cards_trdrbrg' },
+      { id: 'cards-clblflpl', name: 'cl · bl · fl · pl', icon: '🔤', type: 'Flashcard', url: '../shivaya/stories.html?story=cards_clblflpl' },
+      { id: 'cards-ngnkmpnd', name: 'ng · nk · mp · nd', icon: '🔤', type: 'Flashcard', url: '../shivaya/stories.html?story=cards_ngnkmpnd' },
+      // Stories - Phonics narratives
+      { id: 'story-shchth', name: 'The Shop for Chips!', icon: '📖', type: 'Story', url: '../shivaya/stories.html?story=shchth' },
+      { id: 'story-stspsn', name: 'Stop, Spin, Snap!', icon: '📖', type: 'Story', url: '../shivaya/stories.html?story=stspsn' },
+      { id: 'story-trdrbrg', name: 'A Trip to the Park!', icon: '📖', type: 'Story', url: '../shivaya/stories.html?story=trdrbrg' },
+      { id: 'story-clblflpl', name: 'Clap, Blow, Flip, Plop!', icon: '📖', type: 'Story', url: '../shivaya/stories.html?story=clblflpl' },
+      { id: 'story-ngnkmpnd', name: 'Ring, Sink, Jump, Sand!', icon: '📖', type: 'Story', url: '../shivaya/stories.html?story=ngnkmpnd' },
+      // Stories - Family
+      { id: 'story-bua', name: 'Bua Ji', icon: '🧡', type: 'Story', url: '../shivaya/stories.html?story=bua' },
+      { id: 'story-noni', name: 'Noni Mata', icon: '💜', type: 'Story', url: '../shivaya/stories.html?story=noni' },
+      { id: 'story-taya', name: 'Taya Ji', icon: '💚', type: 'Story', url: '../shivaya/stories.html?story=taya' },
+      { id: 'story-dada', name: 'Dada Dadi', icon: '❤️', type: 'Story', url: '../shivaya/stories.html?story=dada' },
+      { id: 'story-papa', name: 'Papa', icon: '💙', type: 'Story', url: '../shivaya/stories.html?story=papa' },
+      // Hindi Stories
+      { id: 'hindi-ganesh', name: 'गणेश जी जीते', icon: '🐘', type: 'Hindi', url: '../shivaya/stories.html?story=ganesh' },
+      { id: 'hindi-krishna', name: 'कृष्ण जी और माखन', icon: '🧈', type: 'Hindi', url: '../shivaya/stories.html?story=krishna' },
+    ];
+
+    const children = [
+      { id: 'shivaya', name: 'Shivaya', avatar: '../avatars/shivaya.jpg', color: '#ec4899' },
+      { id: 'omjai', name: 'Omjai', avatar: '../avatars/omjai.jpg', color: '#6366f1' },
+      { id: 'kainav', name: 'Kainav', avatar: '../avatars/kainav.jpg', color: '#22c55e' },
+      { id: 'maneera', name: 'Maneera', avatar: '../avatars/maneera.jpg', color: '#f59e0b' },
+    ];
+
+    let draggedActivity = null;
+
+    function init() {
+      renderKidsOverview();
+      renderActivityList();
+      renderChildrenColumns();
+    }
+
+    function renderKidsOverview() {
+      const container = document.getElementById('kidsOverview');
+      container.innerHTML = children.map(child => {
+        const stats = Moksh.getOverallStats(child.id);
+        const assignments = Moksh.getAssignments(child.id);
+        const streak = stats?.currentStreak || 0;
+        const sessions = stats?.totalSessions || 0;
+        const accuracy = stats?.overallAccuracy || 0;
+
+        return `
+          <div class="kid-card" style="border-left: 4px solid ${child.color}">
+            <div class="kid-header">
+              <img src="${child.avatar}" alt="${child.name}" class="kid-avatar">
+              <div>
+                <div class="kid-name">${child.name}</div>
+                <div class="kid-streak">${streak > 0 ? `🔥 ${streak} day streak` : '💤 No streak'}</div>
+              </div>
+            </div>
+            <div class="kid-stats">
+              <span>📊 ${sessions} sessions</span>
+              <span>🎯 ${accuracy}%</span>
+            </div>
+            <div class="assigned-count">
+              ${assignments.length > 0 ? `✓ ${assignments.length} activities assigned` : '⚠️ No activities assigned'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderActivityList() {
+      const container = document.getElementById('activityList');
+      container.innerHTML = allActivities.map(a => `
+        <div class="activity-item" draggable="true" data-id="${a.id}"
+             ondragstart="handleDragStart(event, '${a.id}')"
+             ondragend="handleDragEnd(event)">
+          <span class="icon">${a.icon}</span>
+          <div class="info">
+            <div class="name">${a.name}</div>
+            <div class="type">${a.type}</div>
+          </div>
+          <button class="open-btn" onclick="openActivity('${a.id}')" title="Preview">▶</button>
+        </div>
+      `).join('');
+    }
+
+    function openActivity(activityId) {
+      const activity = allActivities.find(a => a.id === activityId);
+      if (activity && activity.url) {
+        window.open(activity.url, '_blank');
+      }
+    }
+
+    function renderChildrenColumns() {
+      const container = document.getElementById('childrenColumns');
+      container.innerHTML = children.map(child => {
+        const assignments = Moksh.getAssignments(child.id);
+        return `
+          <div class="child-column" data-child="${child.id}"
+               ondragover="handleDragOver(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleDrop(event, '${child.id}')">
+            <div class="child-column-header">
+              <img src="${child.avatar}" alt="${child.name}" class="child-column-avatar">
+              <span class="child-column-name">${child.name}</span>
+            </div>
+            <div class="assigned-activities" id="assigned-${child.id}">
+              ${renderAssignedActivities(child.id, assignments)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAssignedActivities(childId, assignments) {
+      if (assignments.length === 0) {
+        return '<div class="drop-hint">Drop activities here</div>';
+      }
+      return assignments.map(actId => {
+        const activity = allActivities.find(a => a.id === actId);
+        if (!activity) return '';
+        return `
+          <div class="assigned-item">
+            <span class="icon">${activity.icon}</span>
+            <span>${activity.name}</span>
+            <button class="remove" onclick="removeAssignment('${childId}', '${actId}')">×</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Drag and drop handlers
+    function handleDragStart(event, activityId) {
+      draggedActivity = activityId;
+      event.target.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'copy';
+    }
+
+    function handleDragEnd(event) {
+      event.target.classList.remove('dragging');
+      draggedActivity = null;
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      event.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(event) {
+      event.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(event, childId) {
+      event.preventDefault();
+      event.currentTarget.classList.remove('drag-over');
+
+      if (draggedActivity) {
+        Moksh.assignActivity(childId, draggedActivity);
+        updateChildColumn(childId);
+        renderKidsOverview();
+        showToast('Activity assigned!');
+      }
+    }
+
+    function removeAssignment(childId, activityId) {
+      Moksh.unassignActivity(childId, activityId);
+      updateChildColumn(childId);
+      renderKidsOverview();
+      showToast('Activity removed');
+    }
+
+    function updateChildColumn(childId) {
+      const container = document.getElementById(`assigned-${childId}`);
+      const assignments = Moksh.getAssignments(childId);
+      container.innerHTML = renderAssignedActivities(childId, assignments);
+    }
+
+    // Quick actions
+    function assignAllToAll() {
+      children.forEach(child => {
+        allActivities.forEach(activity => {
+          Moksh.assignActivity(child.id, activity.id);
+        });
+      });
+      renderChildrenColumns();
+      renderKidsOverview();
+      showToast('All activities assigned to everyone!');
+    }
+
+    function clearAllAssignments() {
+      if (confirm('Clear all assignments? Children will see all activities by default.')) {
+        children.forEach(child => {
+          Moksh.setAssignments(child.id, []);
+        });
+        renderChildrenColumns();
+        renderKidsOverview();
+        showToast('All assignments cleared');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    init();
+  </script>
+</body>
+</html>

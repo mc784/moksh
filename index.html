@@ -3,156 +3,294 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moksh - Learning Hub</title>
+  <title>Moksh</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.3);
+      --text: #ffffff;
+      --muted: #71717a;
+      --success: #22c55e;
     }
 
     body {
-      font-family: 'Georgia', serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* Ambient background */
+    .ambient {
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 70%);
+      animation: drift 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-2%, -2%) rotate(1deg); }
     }
 
     .container {
+      position: relative;
+      z-index: 1;
       text-align: center;
+      width: 100%;
+      max-width: 800px;
     }
 
-    h1 {
-      color: white;
-      font-size: 3rem;
+    .logo {
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       margin-bottom: 0.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .subtitle {
-      color: rgba(255,255,255,0.9);
-      font-size: 1.2rem;
+    .tagline {
+      color: var(--muted);
+      font-size: 1.1rem;
       margin-bottom: 3rem;
     }
 
-    .kids-grid {
+    .profiles {
       display: flex;
-      flex-wrap: wrap;
       gap: 2rem;
       justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
     }
 
-    .kid-card {
-      background: white;
-      border-radius: 20px;
-      padding: 2rem;
-      width: 200px;
-      text-decoration: none;
-      color: #333;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      transition: transform 0.3s, box-shadow 0.3s;
+    .profile-card {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .kid-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    .profile-card:hover {
+      transform: translateY(-8px) scale(1.02);
     }
 
-    .kid-avatar {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+    .profile-card:hover .avatar-ring {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px var(--accent-glow);
     }
 
-    .kid-name {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #4a4a4a;
+    .avatar-ring {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 3px solid #333;
+      padding: 4px;
+      background: var(--surface);
+      transition: all 0.3s;
+      overflow: hidden;
     }
 
-    .kid-grade {
-      font-size: 0.9rem;
-      color: #888;
+    .avatar-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .avatar-ring.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--muted);
+      border-style: dashed;
+    }
+
+    .profile-name {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .profile-streak {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
       margin-top: 0.5rem;
+      padding: 0.3rem 0.8rem;
+      background: rgba(251, 146, 60, 0.15);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #fb923c;
     }
 
-    .add-card {
-      background: rgba(255,255,255,0.2);
-      border: 3px dashed rgba(255,255,255,0.5);
+    .profile-streak.inactive {
+      background: rgba(113, 113, 122, 0.15);
+      color: var(--muted);
+    }
+
+    .add-profile {
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .add-profile:hover {
+      opacity: 1;
+    }
+
+    .add-profile:hover .avatar-ring {
+      border-color: var(--muted);
+    }
+
+    /* Parent avatar top-right */
+    .parent-avatar {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
       color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
 
-    .add-card:hover {
-      background: rgba(255,255,255,0.3);
+    .parent-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
     }
 
-    .add-card .kid-avatar {
-      opacity: 0.8;
+    /* Today indicator */
+    .today-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
     }
 
-    .add-card .kid-name {
-      color: white;
-    }
-
-    .section-title {
-      color: rgba(255,255,255,0.8);
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 3rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .drill-card {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border: 2px solid rgba(255,255,255,0.1);
-    }
-
-    .drill-card .kid-name {
-      color: #ffd700;
-    }
-
-    .drill-card .kid-grade {
-      color: rgba(255,255,255,0.7);
+    @media (max-width: 600px) {
+      .profiles { gap: 1.5rem; }
+      .avatar-ring { width: 100px; height: 100px; }
+      .logo { font-size: 2.5rem; }
     }
   </style>
 </head>
 <body>
+  <div class="ambient"></div>
+
+  <button class="parent-avatar" onclick="window.location.href='parent/'" title="Parent Dashboard">
+    👤
+  </button>
+
   <div class="container">
-    <h1>Moksh</h1>
-    <p class="subtitle">Choose your learning adventure!</p>
+    <h1 class="logo">Moksh</h1>
+    <p class="tagline">Who's learning today?</p>
 
-    <div class="kids-grid">
-      <a href="shivaya/" class="kid-card">
-        <div class="kid-avatar">🌸</div>
-        <div class="kid-name">Shivaya</div>
-        <div class="kid-grade">Stories & Phonics</div>
-      </a>
-
-      <!-- Add more kids here -->
-      <a href="#" class="kid-card add-card" onclick="alert('Coming soon!'); return false;">
-        <div class="kid-avatar">➕</div>
-        <div class="kid-name">Add Child</div>
-      </a>
-    </div>
-
-    <p class="section-title">Practice Drills</p>
-
-    <div class="kids-grid">
-      <a href="drills/times-tables-flashcards.html" class="kid-card drill-card">
-        <div class="kid-avatar">⚡</div>
-        <div class="kid-name">Times Tables</div>
-        <div class="kid-grade">Math Drills</div>
-      </a>
-
-      <a href="drills/science-flashcards.html" class="kid-card drill-card">
-        <div class="kid-avatar">🔬</div>
-        <div class="kid-name">Science Facts</div>
-        <div class="kid-grade">200 Facts</div>
-      </a>
+    <div class="profiles" id="profiles">
+      <!-- Profiles loaded dynamically -->
     </div>
   </div>
+
+  <script src="js/storage.js"></script>
+  <script>
+    // Default profiles
+    const defaultProfiles = [
+      { id: 'shivaya', name: 'Shivaya', avatar: 'avatars/shivaya.jpg', color: '#ec4899' },
+      { id: 'omjai', name: 'Omjai', avatar: 'avatars/omjai.jpg', color: '#6366f1' },
+      { id: 'kainav', name: 'Kainav', avatar: 'avatars/kainav.jpg', color: '#22c55e' },
+      { id: 'maneera', name: 'Maneera', avatar: 'avatars/maneera.jpg', color: '#f59e0b' }
+    ];
+
+    function initProfiles() {
+      // Ensure all profiles exist
+      defaultProfiles.forEach(p => {
+        if (p.avatar && !Moksh.getProfile(p.id)) {
+          Moksh.createProfile(p.id, p.name, p.avatar, p.color);
+        }
+      });
+
+      renderProfiles();
+    }
+
+    function renderProfiles() {
+      const container = document.getElementById('profiles');
+      container.innerHTML = '';
+
+      defaultProfiles.forEach(p => {
+        const profile = Moksh.getProfile(p.id);
+        const isPlaceholder = !profile || !profile.avatar;
+        const streak = profile?.stats?.currentStreak || 0;
+        const isActiveToday = profile ? Moksh.isActiveToday(p.id) : false;
+
+        const card = document.createElement('div');
+        card.className = `profile-card ${isPlaceholder ? 'add-profile' : ''}`;
+        card.onclick = () => selectProfile(p.id, isPlaceholder);
+
+        card.innerHTML = `
+          ${isActiveToday ? '<div class="today-badge">✓</div>' : ''}
+          <div class="avatar-ring ${isPlaceholder ? 'placeholder' : ''}" style="border-color: ${isPlaceholder ? '#333' : p.color}20">
+            ${isPlaceholder
+              ? '<span>+</span>'
+              : `<img src="${profile.avatar}" alt="${profile.name}">`
+            }
+          </div>
+          <div class="profile-name">${isPlaceholder ? 'Add' : profile.name}</div>
+          ${!isPlaceholder ? `
+            <div class="profile-streak ${streak === 0 ? 'inactive' : ''}">
+              ${streak > 0 ? `🔥 ${streak} day${streak > 1 ? 's' : ''}` : '💤 Start streak!'}
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectProfile(id, isPlaceholder) {
+      if (isPlaceholder) {
+        alert('Add more kids coming soon!');
+        return;
+      }
+      Moksh.setCurrentUser(id);
+      window.location.href = `${id}/`;
+    }
+
+    initProfiles();
+  </script>
 </body>
 </html>

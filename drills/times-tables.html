@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Times Tables</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --accent: #6366f1;
+      --success: #22c55e;
+      --error: #ef4444;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-info {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .progress-ring {
+      position: relative;
+      width: 44px;
+      height: 44px;
+    }
+
+    .progress-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 4;
+    }
+
+    .progress-ring .bg { stroke: rgba(255,255,255,0.1); }
+    .progress-ring .fg {
+      stroke: var(--accent);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.3s;
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .score {
+      display: flex;
+      gap: 1rem;
+      font-size: 1rem;
+    }
+
+    .score .correct { color: var(--success); }
+    .score .wrong { color: var(--error); }
+
+    /* Main card area */
+    .card-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 1.4;
+      background: linear-gradient(145deg, var(--surface), #1a1a2a);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.3s, opacity 0.3s;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+    }
+
+    .card.correct {
+      animation: flashCorrect 0.4s;
+    }
+
+    .card.wrong {
+      animation: flashWrong 0.4s;
+    }
+
+    @keyframes flashCorrect {
+      0%, 100% { background: linear-gradient(145deg, var(--surface), #1a1a2a); }
+      50% { background: linear-gradient(145deg, #166534, #14532d); }
+    }
+
+    @keyframes flashWrong {
+      0%, 100% { background: linear-gradient(145deg, var(--surface), #1a1a2a); }
+      50% { background: linear-gradient(145deg, #991b1b, #7f1d1d); }
+    }
+
+    .question {
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .answer {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 1rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .answer.visible {
+      opacity: 1;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 1rem;
+      padding: 2rem;
+      justify-content: center;
+    }
+
+    .action-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-wrong {
+      background: var(--error);
+      color: white;
+    }
+
+    .btn-correct {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-wrong:hover { background: #dc2626; }
+    .btn-correct:hover { background: #16a34a; }
+
+    /* Results overlay */
+    .results {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .results.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .results h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .results .big-score {
+      font-size: 5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success), #86efac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 1rem 0;
+    }
+
+    .results .detail {
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .results .btn-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .results button {
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .results .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .results .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .missed-list {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--surface);
+      border-radius: 12px;
+      max-width: 300px;
+      max-height: 150px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .missed-list h4 {
+      color: var(--error);
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .missed-list p {
+      font-size: 0.9rem;
+      margin: 0.3rem 0;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="close-btn" onclick="exitDrill()">×</button>
+    <div class="progress-info">
+      <div class="progress-ring">
+        <svg width="44" height="44">
+          <circle class="bg" cx="22" cy="22" r="18"/>
+          <circle class="fg" id="progressCircle" cx="22" cy="22" r="18"
+            stroke-dasharray="113" stroke-dashoffset="113"/>
+        </svg>
+        <span class="progress-text" id="progressText">0/20</span>
+      </div>
+      <div class="score">
+        <span class="correct" id="correctCount">✓ 0</span>
+        <span class="wrong" id="wrongCount">✗ 0</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="card-area" onclick="revealAnswer()">
+    <div class="card" id="card">
+      <div class="question" id="question">6 × 7</div>
+      <div class="answer" id="answer">42</div>
+      <div class="hint">Tap to reveal</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="action-btn btn-wrong" onclick="event.stopPropagation(); markWrong()">✗</button>
+    <button class="action-btn btn-correct" onclick="event.stopPropagation(); markCorrect()">✓</button>
+  </div>
+
+  <div class="results" id="results">
+    <h2>Session Complete!</h2>
+    <div class="big-score" id="finalScore">85%</div>
+    <p class="detail" id="finalDetail">17/20 correct</p>
+    <div id="missedContainer"></div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="exitDrill()">Done</button>
+      <button class="btn-primary" onclick="startDrill()">Again</button>
+    </div>
+  </div>
+
+  <canvas id="confetti" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:400;"></canvas>
+
+  <script src="../js/storage.js"></script>
+  <script>
+    // All facts - adaptive selection
+    const allFacts = [
+      // Core (6-9 × 6-9) - most common struggles
+      [6,6,36],[6,7,42],[6,8,48],[6,9,54],
+      [7,7,49],[7,8,56],[7,9,63],
+      [8,8,64],[8,9,72],
+      [9,9,81],
+      // Extended
+      [3,7,21],[3,8,24],[3,9,27],
+      [4,6,24],[4,7,28],[4,8,32],[4,9,36],
+      [7,6,42],[8,6,48],[9,6,54],
+      [12,6,72],[12,7,84],[12,8,96],[12,9,108],
+    ];
+
+    const userId = 'shivaya';
+    const activityId = 'times-tables';
+    let deck = [], current = 0, correct = 0, wrong = 0, missed = [];
+    let revealed = false;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startDrill() {
+      // Pick 20 random facts
+      deck = shuffle(allFacts).slice(0, 20);
+      current = 0;
+      correct = 0;
+      wrong = 0;
+      missed = [];
+      revealed = false;
+
+      document.getElementById('results').classList.remove('visible');
+      Moksh.startSession(userId, activityId);
+      showCard();
+    }
+
+    function showCard() {
+      if (current >= deck.length) {
+        endDrill();
+        return;
+      }
+
+      revealed = false;
+      const [a, b, ans] = deck[current];
+      document.getElementById('question').textContent = `${a} × ${b}`;
+      document.getElementById('answer').textContent = ans;
+      document.getElementById('answer').classList.remove('visible');
+      document.getElementById('card').classList.remove('correct', 'wrong');
+
+      updateProgress();
+    }
+
+    function revealAnswer() {
+      if (!revealed) {
+        revealed = true;
+        document.getElementById('answer').classList.add('visible');
+      }
+    }
+
+    function markCorrect() {
+      if (current >= deck.length) return;
+      revealAnswer();
+
+      correct++;
+      document.getElementById('card').classList.add('correct');
+      document.getElementById('correctCount').textContent = `✓ ${correct}`;
+      Moksh.recordAnswer(userId, activityId, true);
+
+      setTimeout(() => {
+        current++;
+        showCard();
+      }, 300);
+    }
+
+    function markWrong() {
+      if (current >= deck.length) return;
+      revealAnswer();
+
+      wrong++;
+      missed.push(deck[current]);
+      document.getElementById('card').classList.add('wrong');
+      document.getElementById('wrongCount').textContent = `✗ ${wrong}`;
+      Moksh.recordAnswer(userId, activityId, false);
+
+      setTimeout(() => {
+        current++;
+        showCard();
+      }, 500);
+    }
+
+    function updateProgress() {
+      const pct = deck.length > 0 ? current / deck.length : 0;
+      const offset = 113 - (113 * pct);
+      document.getElementById('progressCircle').style.strokeDashoffset = offset;
+      document.getElementById('progressText').textContent = `${current}/${deck.length}`;
+    }
+
+    function endDrill() {
+      const result = Moksh.endSession(userId, activityId);
+      const pct = deck.length > 0 ? Math.round((correct / deck.length) * 100) : 0;
+
+      document.getElementById('finalScore').textContent = `${pct}%`;
+      document.getElementById('finalDetail').textContent = `${correct}/${deck.length} correct`;
+
+      const container = document.getElementById('missedContainer');
+      if (missed.length > 0) {
+        container.innerHTML = `
+          <div class="missed-list">
+            <h4>Review these:</h4>
+            ${missed.map(([a,b,c]) => `<p>${a} × ${b} = ${c}</p>`).join('')}
+          </div>
+        `;
+      } else {
+        container.innerHTML = '<p style="color: var(--success); margin: 1rem 0;">Perfect score! 🎉</p>';
+      }
+
+      document.getElementById('results').classList.add('visible');
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
+
+      for (let i = 0; i < 150; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: Math.random() * Math.PI,
+          tiltSpeed: Math.random() * 0.1 + 0.05
+        });
+      }
+
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tiltAngle);
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
+          ctx.restore();
+
+          p.y += 3 + Math.random() * 2;
+          p.x += Math.sin(p.tilt) * 0.5;
+          p.tiltAngle += p.tiltSpeed;
+
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+
+        frame++;
+        if (frame < 180) {
+          requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      draw();
+    }
+
+    function exitDrill() {
+      window.history.back();
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { revealAnswer(); e.preventDefault(); }
+      if (e.key === 'ArrowRight' || e.key === 'y') markCorrect();
+      if (e.key === 'ArrowLeft' || e.key === 'n') markWrong();
+      if (e.key === 'Escape') exitDrill();
+    });
+
+    // Start immediately
+    startDrill();
+  </script>
+</body>
+</html>
