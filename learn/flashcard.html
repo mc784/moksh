@@ -105,24 +105,74 @@
       color: var(--muted);
     }
 
-    /* Card Container */
-    .card-container {
+    /* Play Area - Card + Transport Buttons */
+    .play-area {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: calc(100vh - 200px);
-      padding: 1.5rem;
+      gap: 1.5rem;
+      height: calc(100vh - 160px);
+      padding: 1rem 1.5rem;
       perspective: 1000px;
+    }
+
+    /* Answer Buttons - Transport Style */
+    .answer-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .answer-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .answer-btn:active {
+      transform: scale(0.9);
+    }
+
+    .answer-btn.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--error);
+    }
+
+    .answer-btn.wrong:hover, .answer-btn.wrong:active {
+      background: var(--error);
+      color: white;
+      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    .answer-btn.correct {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+    }
+
+    .answer-btn.correct:hover, .answer-btn.correct:active {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
     }
 
     /* Flashcard */
     .flashcard {
       width: 100%;
-      max-width: 400px;
-      height: 280px;
+      max-width: 380px;
+      height: 260px;
       cursor: pointer;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
     }
 
     .flashcard.flipped {
@@ -177,53 +227,6 @@
       font-size: 0.75rem;
       color: var(--muted);
       opacity: 0.6;
-    }
-
-    /* Answer Buttons */
-    .answer-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: 0 1.5rem 2rem;
-    }
-
-    .answer-btn {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: none;
-      font-size: 2rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .answer-btn:active {
-      transform: scale(0.9);
-    }
-
-    .answer-btn.wrong {
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--error);
-    }
-
-    .answer-btn.wrong:hover {
-      background: var(--error);
-      color: white;
-      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    .answer-btn.correct {
-      background: rgba(34, 197, 94, 0.2);
-      color: var(--success);
-    }
-
-    .answer-btn.correct:hover {
-      background: var(--success);
-      color: white;
-      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
     }
 
     /* Celebration Overlay */
@@ -315,10 +318,52 @@
       z-index: 200;
     }
 
-    /* Responsive */
+    /* Responsive - Portrait phones */
     @media (max-width: 480px) {
+      .play-area {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+      }
+      .play-area .answer-btn {
+        display: none;
+      }
+      .answer-buttons-mobile {
+        display: flex !important;
+      }
       .card-content { font-size: 2rem; }
-      .flashcard { height: 240px; }
+      .flashcard { height: 220px; max-width: 320px; }
+    }
+
+    /* Mobile answer buttons (below card on small screens) */
+    .answer-buttons-mobile {
+      display: none;
+      justify-content: center;
+      gap: 2rem;
+      padding: 0.5rem;
+    }
+
+    .answer-buttons-mobile .answer-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .answer-buttons-mobile .answer-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Landscape tablet optimization */
+    @media (min-width: 600px) and (max-height: 500px) {
+      .nav { padding: 0.5rem 1rem; }
+      .nav-back { width: 40px; height: 40px; font-size: 1.2rem; }
+      .nav-title h1 { font-size: 1rem; }
+      .nav-icon { font-size: 1.5rem; }
+      .progress-container { padding: 0.5rem 1rem; }
+      .play-area { height: calc(100vh - 100px); padding: 0.5rem 1rem; }
+      .flashcard { height: 200px; max-width: 340px; }
+      .card-content { font-size: 2rem; }
+      .answer-btn { width: 56px; height: 56px; font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -342,7 +387,9 @@
     </div>
   </div>
 
-  <div class="card-container">
+  <div class="play-area">
+    <button class="answer-btn wrong" id="btnWrong" onclick="answer(false)" aria-label="Wrong">✗</button>
+
     <div class="flashcard" id="flashcard" onclick="flipCard()">
       <div class="card-face card-front">
         <div class="card-content" id="cardFront">Loading...</div>
@@ -353,11 +400,13 @@
         <div class="card-hint" id="cardHint"></div>
       </div>
     </div>
+
+    <button class="answer-btn correct" id="btnCorrect" onclick="answer(true)" aria-label="Correct">✓</button>
   </div>
 
-  <div class="answer-buttons" id="answerButtons" style="visibility: hidden;">
-    <button class="answer-btn wrong" onclick="answer(false)" aria-label="Wrong">✗</button>
-    <button class="answer-btn correct" onclick="answer(true)" aria-label="Correct">✓</button>
+  <div class="answer-buttons-mobile">
+    <button class="answer-btn wrong" id="btnWrongMobile" onclick="answer(false)" aria-label="Wrong">✗</button>
+    <button class="answer-btn correct" id="btnCorrectMobile" onclick="answer(true)" aria-label="Correct">✓</button>
   </div>
 
   <div class="complete-overlay" id="completeOverlay" onclick="goBack()">
@@ -449,7 +498,7 @@
       // Reset card state
       isFlipped = false;
       document.getElementById('flashcard').classList.remove('flipped');
-      document.getElementById('answerButtons').style.visibility = 'hidden';
+      setButtonsVisible(false);
 
       updateProgress();
     }
@@ -459,7 +508,18 @@
 
       isFlipped = true;
       document.getElementById('flashcard').classList.add('flipped');
-      document.getElementById('answerButtons').style.visibility = 'visible';
+      setButtonsVisible(true);
+    }
+
+    function setButtonsVisible(visible) {
+      const btns = document.querySelectorAll('.answer-btn');
+      btns.forEach(btn => {
+        if (visible) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+      });
     }
 
     function answer(isCorrect) {
