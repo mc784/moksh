@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moksh - Learning Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      color: white;
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .kids-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .kid-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      width: 200px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .kid-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .kid-avatar {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .kid-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4a4a4a;
+    }
+
+    .kid-grade {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+
+    .add-card {
+      background: rgba(255,255,255,0.2);
+      border: 3px dashed rgba(255,255,255,0.5);
+      color: white;
+    }
+
+    .add-card:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .add-card .kid-avatar {
+      opacity: 0.8;
+    }
+
+    .add-card .kid-name {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Moksh</h1>
+    <p class="subtitle">Choose your learning adventure!</p>
+
+    <div class="kids-grid">
+      <a href="shivaya/" class="kid-card">
+        <div class="kid-avatar">🌸</div>
+        <div class="kid-name">Shivaya</div>
+        <div class="kid-grade">Stories & Phonics</div>
+      </a>
+
+      <!-- Add more kids here -->
+      <a href="#" class="kid-card add-card" onclick="alert('Coming soon!'); return false;">
+        <div class="kid-avatar">➕</div>
+        <div class="kid-name">Add Child</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

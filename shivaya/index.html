@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shivaya's Story Time!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.95);
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: #d35400;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      color: #e67e22;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      color: #7f5539;
+    }
+
+    .book {
+      background: #fffef9;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      max-width: 600px;
+      width: 100%;
+      padding: 3rem 2.5rem;
+      margin-top: 4rem;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      font-family: 'Georgia', serif;
+      font-size: 1.1rem;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      background: #f0e6d3;
+      color: #7f5539;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #d35400;
+      color: white;
+      box-shadow: 0 4px 12px rgba(211, 84, 0, 0.3);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #e6d5c3;
+    }
+
+    .story {
+      display: none;
+    }
+
+    .story.active {
+      display: block;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #d35400;
+      margin-bottom: 2rem;
+    }
+
+    .page {
+      margin-bottom: 1.8rem;
+      padding: 1.2rem 1.5rem;
+      border-radius: 12px;
+      background: #fdf6ee;
+      border-left: 5px solid #f39c12;
+    }
+
+    .page p {
+      font-size: 1.5rem;
+      line-height: 1.8;
+      color: #2c3e50;
+      word-spacing: 0.3rem;
+    }
+
+    .emoji {
+      font-size: 3rem;
+      display: block;
+      text-align: center;
+      margin-top: 0.8rem;
+    }
+
+    .the-end {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #e74c3c;
+      margin-top: 1.5rem;
+      font-style: italic;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="../" class="back-btn">← Home</a>
+    <span class="header-title">Shivaya's Corner 🌸</span>
+  </div>
+
+  <div class="book">
+    <p class="section-label">Family Stories</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showStory('bua')">Bua Ji 🧡</button>
+      <button class="tab-btn" onclick="showStory('noni')">Noni Mata 💜</button>
+      <button class="tab-btn" onclick="showStory('taya')">Taya Ji 💚</button>
+      <button class="tab-btn" onclick="showStory('dada')">Dada Dadi ❤️</button>
+      <button class="tab-btn" onclick="showStory('papa')">Papa 💙</button>
+    </div>
+
+    <p class="section-label">Phonics Practice</p>
+    <div class="tabs">
+      <button class="tab-btn" onclick="showStory('shchth')">sh·ch·th</button>
+      <button class="tab-btn" onclick="showStory('stspsn')">st·sp·sn</button>
+      <button class="tab-btn" onclick="showStory('trdrbrg')">tr·dr·br·gr</button>
+      <button class="tab-btn" onclick="showStory('clblflpl')">cl·bl·fl·pl</button>
+      <button class="tab-btn" onclick="showStory('ngnkmpnd')">ng·nk·mp·nd</button>
+    </div>
+
+    <!-- Story 1: Bua Ji -->
+    <div class="story active" id="story-bua">
+      <h1>We Go to Bua Ji! 🧡</h1>
+
+      <div class="page">
+        <p>Mom and Dad say, "We go to Bua Ji!"</p>
+        <span class="emoji">🚗</span>
+      </div>
+
+      <div class="page">
+        <p>I am so happy. I run to the car.</p>
+        <span class="emoji">😄</span>
+      </div>
+
+      <div class="page">
+        <p>We see the sun. We see a cow. We see a big red bus.</p>
+        <span class="emoji">🌞🐄🚌</span>
+      </div>
+
+      <div class="page">
+        <p>Bua Ji has a dog. His name is Twitter. He is so fun!</p>
+        <span class="emoji">🐕</span>
+      </div>
+
+      <div class="page">
+        <p>He runs and runs and runs. He plays ball with me!</p>
+        <span class="emoji">🐶⚽</span>
+      </div>
+
+      <div class="page">
+        <p>Bua Ji gives me a hot cup of tea and a bun.</p>
+        <span class="emoji">☕🍞</span>
+      </div>
+
+      <div class="page">
+        <p>We sit on the mat. She tells me a fun tale.</p>
+        <span class="emoji">📖</span>
+      </div>
+
+      <div class="page">
+        <p>I hug Bua Ji. She is the best!</p>
+        <span class="emoji">🤗</span>
+      </div>
+
+      <div class="page">
+        <p>The sun sets. We say bye. I wave and wave.</p>
+        <span class="emoji">🌅👋</span>
+      </div>
+
+      <div class="page">
+        <p>"Can we go to Bua Ji again?" I ask.</p>
+        <p>Mom says, "Yes! We can."</p>
+        <span class="emoji">💛</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Story 2: Noni Mata -->
+    <div class="story" id="story-noni">
+      <h1>Noni Mata Is Here! 💜</h1>
+
+      <div class="page">
+        <p>I hear a big jeep. It goes beep beep!</p>
+        <span class="emoji">🚙💨</span>
+      </div>
+
+      <div class="page">
+        <p>It is Noni Mata! She is here!</p>
+        <span class="emoji">👵🏽🤩</span>
+      </div>
+
+      <div class="page">
+        <p>She has a big bag. "Toys for you!" she says.</p>
+        <span class="emoji">🎁🧸</span>
+      </div>
+
+      <div class="page">
+        <p>I see a red car, a top, and a bat and ball.</p>
+        <span class="emoji">🚗🪀🏏</span>
+      </div>
+
+      <div class="page">
+        <p>And who is that? It is Piper the dog!</p>
+        <span class="emoji">🐕</span>
+      </div>
+
+      <div class="page">
+        <p>Piper can run and hop. Her tail goes wag wag wag.</p>
+        <span class="emoji">🐶💫</span>
+      </div>
+
+      <div class="page">
+        <p>I pet Piper. She licks my hand. So fun!</p>
+        <span class="emoji">🥰🐾</span>
+      </div>
+
+      <div class="page">
+        <p>Noni Mata sits with me. We play all day.</p>
+        <span class="emoji">👵🏽🧒🏽</span>
+      </div>
+
+      <div class="page">
+        <p>At night, she hugs me tight. "I love you," she says.</p>
+        <span class="emoji">🌙🤗</span>
+      </div>
+
+      <div class="page">
+        <p>I say, "Stay, Noni Mata! Stay and stay!"</p>
+        <p>She says, "I will, my love."</p>
+        <span class="emoji">💜</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Story 3: Taya Ji -->
+    <div class="story" id="story-taya">
+      <h1>Fun with Taya Ji! 💚</h1>
+
+      <div class="page">
+        <p>Taya Ji says, "Let us go to the park!"</p>
+        <p>Tayi Ji says, "Yes! Let us go!"</p>
+        <span class="emoji">🌳🎉</span>
+      </div>
+
+      <div class="page">
+        <p>I run and hop. I go up the slide. So fun!</p>
+        <span class="emoji">🛝😆</span>
+      </div>
+
+      <div class="page">
+        <p>Tayi Ji pushes me on the swing. Up, up, up I go!</p>
+        <span class="emoji">🎠💨</span>
+      </div>
+
+      <div class="page">
+        <p>Then Taya Ji says, "Gol gappa time!"</p>
+        <p>I clap and clap.</p>
+        <span class="emoji">👏🤤</span>
+      </div>
+
+      <div class="page">
+        <p>Pop! I eat one. Pop! I eat two. My mouth is full!</p>
+        <span class="emoji">🤭💦</span>
+      </div>
+
+      <div class="page">
+        <p>Taya Ji gives me his phone. I play Tetris!</p>
+        <span class="emoji">📱🟦🟨🟩</span>
+      </div>
+
+      <div class="page">
+        <p>Then I watch Bluey and Peppa and Paw Patrol.</p>
+        <span class="emoji">🐶🐷🐾</span>
+      </div>
+
+      <div class="page">
+        <p>Taya Ji and Tayi Ji are so much fun!</p>
+        <p>I say, "Bye bye!" and skip to my room.</p>
+        <span class="emoji">💚🥰</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Story 4: Dada Dadi -->
+    <div class="story" id="story-dada">
+      <h1>Dada Ji Dadi Ji's Room! ❤️</h1>
+
+      <div class="page">
+        <p>I run to Dada Ji Dadi Ji's room. The door is open!</p>
+        <span class="emoji">🚪🏃‍♀️</span>
+      </div>
+
+      <div class="page">
+        <p>Dadi Ji gives me a big hug. Dada Ji lifts me up high!</p>
+        <span class="emoji">🤗👴🏽</span>
+      </div>
+
+      <div class="page">
+        <p>We sit on the bed. Dada Ji puts on the TV.</p>
+        <span class="emoji">📺🛏️</span>
+      </div>
+
+      <div class="page">
+        <p>I say, "Alexa, play a song!" And she does!</p>
+        <span class="emoji">🎵🔊</span>
+      </div>
+
+      <div class="page">
+        <p>Dadi Ji opens a tin. "Here, have a candy," she says.</p>
+        <span class="emoji">🍬🍭</span>
+      </div>
+
+      <div class="page">
+        <p>I eat one. So sweet! I ask for one more. She smiles.</p>
+        <span class="emoji">😋👵🏽</span>
+      </div>
+
+      <div class="page">
+        <p>Dada Ji tells me a funny joke. I laugh and laugh!</p>
+        <span class="emoji">😂🤣</span>
+      </div>
+
+      <div class="page">
+        <p>I curl up with Dadi Ji. She pats my head.</p>
+        <span class="emoji">🥰💤</span>
+      </div>
+
+      <div class="page">
+        <p>I love Dada Ji Dadi Ji so so much.</p>
+        <p>Their room is the best room!</p>
+        <span class="emoji">❤️🏠</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Story 5: Papa -->
+    <div class="story" id="story-papa">
+      <h1>My Papa! 💙</h1>
+
+      <div class="page">
+        <p>My Papa is tuf. He has a big, loud voice.</p>
+        <span class="emoji">🧔🏽💪</span>
+      </div>
+
+      <div class="page">
+        <p>But Papa has so much lubj for me!</p>
+        <span class="emoji">💙🥰</span>
+      </div>
+
+      <div class="page">
+        <p>I jump on the bed. Papa says, "Sh sh sh sh... not now. It is nap time."</p>
+        <span class="emoji">🛏️🤫</span>
+      </div>
+
+      <div class="page">
+        <p>I stop. I sit. Papa pats my back till I rest.</p>
+        <span class="emoji">😴✋</span>
+      </div>
+
+      <div class="page">
+        <p>I grab the tablet. I tap tap tap.</p>
+        <span class="emoji">📱👆</span>
+      </div>
+
+      <div class="page">
+        <p>Papa says, "Ch ch ch ch... that is not good, Shivaya. Go play in the yard!"</p>
+        <span class="emoji">🙅‍♂️🌿</span>
+      </div>
+
+      <div class="page">
+        <p>I run to the yard. I kick a ball. I spot a bug. It is fun!</p>
+        <span class="emoji">⚽🐛🌳</span>
+      </div>
+
+      <div class="page">
+        <p>Papa claps. "Good job!" he says. He lifts me up and spins me!</p>
+        <span class="emoji">🎉🙌</span>
+      </div>
+
+      <div class="page">
+        <p>Papa is tuf. But his lubj is the best lubj.</p>
+        <span class="emoji">💙🤗</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Phonics Set 1: sh, ch, th -->
+    <div class="story" id="story-shchth">
+      <h1>The Shop for Chips! 📖</h1>
+      <p style="text-align:center; font-size:1rem; color:#888; margin-bottom:1.5rem;">Focus: <b>sh</b> · <b>ch</b> · <b>th</b></p>
+
+      <div class="page">
+        <p>"Let us go to <b>th</b>e <b>sh</b>op," says Mom.</p>
+        <span class="emoji">🛒</span>
+      </div>
+
+      <div class="page">
+        <p>I put on my <b>sh</b>oes. I <b>sh</b>ut <b>th</b>e door.</p>
+        <span class="emoji">👟🚪</span>
+      </div>
+
+      <div class="page">
+        <p>We walk on <b>th</b>e pa<b>th</b>. I see a <b>sh</b>ell!</p>
+        <span class="emoji">🐚</span>
+      </div>
+
+      <div class="page">
+        <p>At <b>th</b>e <b>sh</b>op, I pick <b>ch</b>ips and <b>ch</b>eese.</p>
+        <span class="emoji">🍟🧀</span>
+      </div>
+
+      <div class="page">
+        <p>Mom gets a bun<b>ch</b> of <b>ch</b>erries. Yum!</p>
+        <span class="emoji">🍒</span>
+      </div>
+
+      <div class="page">
+        <p>"Can I have <b>ch</b>ocolate?" I ask wi<b>th</b> a grin.</p>
+        <span class="emoji">🍫😁</span>
+      </div>
+
+      <div class="page">
+        <p>Mom says, "<b>Sh</b>! Not too mu<b>ch</b>!"</p>
+        <span class="emoji">🤫</span>
+      </div>
+
+      <div class="page">
+        <p>We pay and <b>th</b>ank <b>th</b>e man at <b>th</b>e till.</p>
+        <span class="emoji">💰👋</span>
+      </div>
+
+      <div class="page">
+        <p>Back home, I mun<b>ch</b> my <b>ch</b>ips on <b>th</b>e mat.</p>
+        <span class="emoji">😋🏠</span>
+      </div>
+
+      <div class="page">
+        <p>"<b>Th</b>at was fun!" I say. Mom gives me a big hug.</p>
+        <span class="emoji">🤗💛</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Phonics Set 2: st, sp, sn -->
+    <div class="story" id="story-stspsn">
+      <h1>Stop, Spin, Snap! 📖</h1>
+      <p style="text-align:center; font-size:1rem; color:#888; margin-bottom:1.5rem;">Focus: <b>st</b> · <b>sp</b> · <b>sn</b></p>
+
+      <div class="page">
+        <p>I <b>st</b>and up. I <b>st</b>retch. Time to play!</p>
+        <span class="emoji">🧍‍♀️🙆‍♀️</span>
+      </div>
+
+      <div class="page">
+        <p>I run fa<b>st</b>. Dad says, "<b>St</b>op!"</p>
+        <span class="emoji">🏃‍♀️✋</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>sp</b>in and <b>sp</b>in. The park is a blur!</p>
+        <span class="emoji">🌀😵‍💫</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>sp</b>ot a <b>sn</b>ail on a <b>st</b>ump.</p>
+        <span class="emoji">🐌🪵</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>st</b>ep soft. I do not want to <b>st</b>ep on it!</p>
+        <span class="emoji">🦶👀</span>
+      </div>
+
+      <div class="page">
+        <p>Dad and I play <b>Sn</b>ap! I am fa<b>st</b>. I win!</p>
+        <span class="emoji">🃏🏆</span>
+      </div>
+
+      <div class="page">
+        <p>We have a <b>sn</b>ack. I eat a <b>sp</b>icy <b>sn</b>ack mix.</p>
+        <span class="emoji">🌶️🥨</span>
+      </div>
+
+      <div class="page">
+        <p>The <b>st</b>ars come out. I <b>st</b>are up at them.</p>
+        <span class="emoji">🌟🌙</span>
+      </div>
+
+      <div class="page">
+        <p>I feel <b>sn</b>ug in bed. What a fun day!</p>
+        <span class="emoji">🛏️😊</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Phonics Set 3: tr, dr, br, gr -->
+    <div class="story" id="story-trdrbrg">
+      <h1>A Trip to the Park! 📖</h1>
+      <p style="text-align:center; font-size:1rem; color:#888; margin-bottom:1.5rem;">Focus: <b>tr</b> · <b>dr</b> · <b>br</b> · <b>gr</b></p>
+
+      <div class="page">
+        <p>We go on a <b>tr</b>ip! I <b>gr</b>ab my bag.</p>
+        <span class="emoji">🎒🚶‍♀️</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>br</b>ush my teeth. <b>Dr</b>ip <b>dr</b>ip goes the tap.</p>
+        <span class="emoji">🪥💧</span>
+      </div>
+
+      <div class="page">
+        <p>We <b>tr</b>ot down the <b>tr</b>ail. The <b>gr</b>ass is wet.</p>
+        <span class="emoji">🌿🥾</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>tr</b>ip on a <b>br</b>anch! But I do not fall.</p>
+        <span class="emoji">🌳😅</span>
+      </div>
+
+      <div class="page">
+        <p>A <b>gr</b>een frog hops. I <b>gr</b>in at it.</p>
+        <span class="emoji">🐸😁</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>dr</b>aw the frog on a pad. It looks <b>gr</b>eat!</p>
+        <span class="emoji">🎨✏️</span>
+      </div>
+
+      <div class="page">
+        <p>We eat <b>br</b>ead and jam on a <b>br</b>ick wall.</p>
+        <span class="emoji">🍞🧱</span>
+      </div>
+
+      <div class="page">
+        <p>I beat a <b>dr</b>um. Boom boom boom!</p>
+        <span class="emoji">🥁🎶</span>
+      </div>
+
+      <div class="page">
+        <p>What a <b>gr</b>and <b>tr</b>ip! I can not wait to go back.</p>
+        <span class="emoji">💚🌳</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Phonics Set 4: cl, bl, fl, pl -->
+    <div class="story" id="story-clblflpl">
+      <h1>Clap, Blow, Flip, Plop! 📖</h1>
+      <p style="text-align:center; font-size:1rem; color:#888; margin-bottom:1.5rem;">Focus: <b>cl</b> · <b>bl</b> · <b>fl</b> · <b>pl</b></p>
+
+      <div class="page">
+        <p>I <b>cl</b>ap my hands. One, two, three!</p>
+        <span class="emoji">👏🎵</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>bl</b>ow up a red <b>bl</b>oon. Pop!</p>
+        <span class="emoji">🎈💥</span>
+      </div>
+
+      <div class="page">
+        <p>The <b>fl</b>ag goes <b>fl</b>ap <b>fl</b>ap in the wind.</p>
+        <span class="emoji">🚩💨</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>pl</b>ant a seed in the mud. <b>Pl</b>op!</p>
+        <span class="emoji">🌱🪴</span>
+      </div>
+
+      <div class="page">
+        <p>Mom makes a <b>pl</b>um cake. I <b>cl</b>ean the bowl.</p>
+        <span class="emoji">🍰🥣</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>fl</b>ip a pancake up high. I catch it!</p>
+        <span class="emoji">🥞🙌</span>
+      </div>
+
+      <div class="page">
+        <p>The <b>cl</b>ock goes tick tock. Time to <b>pl</b>ay!</p>
+        <span class="emoji">🕐⏰</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>bl</b>end red and <b>bl</b>ue. I get purple!</p>
+        <span class="emoji">🎨💜</span>
+      </div>
+
+      <div class="page">
+        <p>I <b>cl</b>imb in bed. I <b>fl</b>uff my <b>pl</b>ow. Good night!</p>
+        <span class="emoji">🛏️😴</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+
+    <!-- Phonics Set 5: ng, nk, mp, nd -->
+    <div class="story" id="story-ngnkmpnd">
+      <h1>Ring, Sink, Jump, Sand! 📖</h1>
+      <p style="text-align:center; font-size:1rem; color:#888; margin-bottom:1.5rem;">Focus: <b>ng</b> · <b>nk</b> · <b>mp</b> · <b>nd</b></p>
+
+      <div class="page">
+        <p>I hear the bell ri<b>ng</b>. Time to go out!</p>
+        <span class="emoji">🔔🏃‍♀️</span>
+      </div>
+
+      <div class="page">
+        <p>I si<b>ng</b> a so<b>ng</b> as I skip alo<b>ng</b>.</p>
+        <span class="emoji">🎤🎶</span>
+      </div>
+
+      <div class="page">
+        <p>I ju<b>mp</b> in a puddle. Splash! My feet are wet.</p>
+        <span class="emoji">💦🦶</span>
+      </div>
+
+      <div class="page">
+        <p>I bu<b>mp</b> into Dad. He holds my ha<b>nd</b>.</p>
+        <span class="emoji">🤝👨</span>
+      </div>
+
+      <div class="page">
+        <p>We fi<b>nd</b> a po<b>nd</b>. A duck swims rou<b>nd</b> a<b>nd</b> rou<b>nd</b>.</p>
+        <span class="emoji">🦆🌊</span>
+      </div>
+
+      <div class="page">
+        <p>I thi<b>nk</b> I see a fish si<b>nk</b> down deep.</p>
+        <span class="emoji">🐟👀</span>
+      </div>
+
+      <div class="page">
+        <p>We play in the sa<b>nd</b>. I make a la<b>mp</b> from mud!</p>
+        <span class="emoji">🏖️🪔</span>
+      </div>
+
+      <div class="page">
+        <p>I sta<b>mp</b> my feet. Ba<b>ng</b> ba<b>ng</b> ba<b>ng</b>!</p>
+        <span class="emoji">🦶💥</span>
+      </div>
+
+      <div class="page">
+        <p>The ki<b>ng</b> of the sa<b>nd</b>pit — that is me!</p>
+        <p>I tha<b>nk</b> Dad for a fu<b>n</b> day.</p>
+        <span class="emoji">👑🧡</span>
+      </div>
+
+      <p class="the-end">The End ✨</p>
+    </div>
+  </div>
+
+  <script>
+    function showStory(id) {
+      document.querySelectorAll('.story').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('story-' + id).classList.add('active');
+      event.currentTarget.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
