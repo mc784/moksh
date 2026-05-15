@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Flashcards</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,161 +18,109 @@
       --muted: #71717a;
     }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Navigation Bar */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      background: var(--surface);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .nav-back {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--surface2);
-      border: none;
-      color: var(--text);
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .nav-back:hover {
-      background: var(--accent);
-      transform: scale(1.05);
-    }
-
-    .nav-title {
       display: flex;
       flex-direction: column;
+    }
+
+    /* Compact Header */
+    .header {
+      display: flex;
       align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
     }
 
-    .nav-title h1 {
-      font-size: 1.1rem;
+    .header-icon {
+      font-size: 1.5rem;
+    }
+
+    .header-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .header-title {
+      font-size: 0.95rem;
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .nav-subtitle {
-      font-size: 0.75rem;
+    .header-subtitle {
+      font-size: 0.7rem;
       color: var(--muted);
     }
 
-    .nav-icon {
-      font-size: 2rem;
+    .header-progress {
+      text-align: right;
+    }
+
+    .header-count {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .header-accuracy {
+      font-size: 0.7rem;
+      color: var(--muted);
     }
 
     /* Progress Bar */
-    .progress-container {
-      padding: 1rem 1.5rem;
-      background: var(--surface);
-    }
-
     .progress-bar {
-      height: 8px;
+      height: 4px;
       background: var(--surface2);
-      border-radius: 4px;
-      overflow: hidden;
+      flex-shrink: 0;
     }
 
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent), var(--success));
-      border-radius: 4px;
       transition: width 0.3s ease;
       width: 0%;
     }
 
-    .progress-text {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* Play Area - Card + Transport Buttons */
+    /* Main Play Area */
     .play-area {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1.5rem;
-      height: calc(100vh - 160px);
-      padding: 1rem 1.5rem;
-      perspective: 1000px;
-    }
-
-    /* Answer Buttons - Transport Style */
-    .answer-btn {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .answer-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .answer-btn:active {
-      transform: scale(0.9);
-    }
-
-    .answer-btn.wrong {
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--error);
-    }
-
-    .answer-btn.wrong:hover, .answer-btn.wrong:active {
-      background: var(--error);
-      color: white;
-      box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    .answer-btn.correct {
-      background: rgba(34, 197, 94, 0.2);
-      color: var(--success);
-    }
-
-    .answer-btn.correct:hover, .answer-btn.correct:active {
-      background: var(--success);
-      color: white;
-      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+      padding: 1rem;
+      gap: 1rem;
+      overflow: hidden;
     }
 
     /* Flashcard */
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 360px;
+      flex-shrink: 1;
+      min-height: 0;
+    }
+
     .flashcard {
       width: 100%;
-      max-width: 380px;
-      height: 260px;
+      aspect-ratio: 4/3;
+      max-height: 240px;
       cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      flex-shrink: 0;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
     .flashcard.flipped {
@@ -184,14 +132,14 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 24px;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 1.5rem;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
     }
 
     .card-front {
@@ -205,14 +153,14 @@
     }
 
     .card-content {
-      font-size: 2.5rem;
+      font-size: clamp(1.8rem, 8vw, 2.5rem);
       font-weight: 700;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .card-hint {
-      margin-top: 1rem;
-      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
       color: var(--muted);
       opacity: 0.8;
     }
@@ -223,10 +171,88 @@
 
     .tap-hint {
       position: absolute;
-      bottom: 1.5rem;
-      font-size: 0.75rem;
+      bottom: 1rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      opacity: 0.6;
+      opacity: 0.5;
+    }
+
+    /* Transport Controls */
+    .transport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .transport-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transport-btn:active {
+      transform: scale(0.9);
+    }
+
+    .transport-btn.back {
+      background: var(--surface2);
+      color: var(--muted);
+      width: 48px;
+      height: 48px;
+      font-size: 1.3rem;
+    }
+
+    .transport-btn.back:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .transport-btn.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .transport-btn.wrong.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .transport-btn.wrong.active:hover,
+    .transport-btn.wrong.active:active {
+      background: var(--error);
+      color: white;
+      box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4);
+    }
+
+    .transport-btn.correct {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .transport-btn.correct.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .transport-btn.correct.active:hover,
+    .transport-btn.correct.active:active {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 6px 24px rgba(34, 197, 94, 0.4);
     }
 
     /* Celebration Overlay */
@@ -245,6 +271,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
+      padding: 2rem;
     }
 
     .complete-overlay.visible {
@@ -253,7 +280,7 @@
     }
 
     .complete-icon {
-      font-size: 6rem;
+      font-size: 4rem;
       animation: bounce 0.6s ease;
     }
 
@@ -263,15 +290,15 @@
     }
 
     .complete-title {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin: 1rem 0;
+      margin: 0.8rem 0;
     }
 
     .complete-stats {
       display: flex;
       gap: 2rem;
-      margin: 1.5rem 0;
+      margin: 1rem 0;
     }
 
     .complete-stat {
@@ -279,24 +306,24 @@
     }
 
     .complete-stat-value {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 700;
       color: var(--success);
     }
 
     .complete-stat-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--muted);
     }
 
     .complete-btn {
-      margin-top: 2rem;
-      padding: 1rem 3rem;
+      margin-top: 1.5rem;
+      padding: 0.8rem 2.5rem;
       border-radius: 50px;
       background: var(--accent);
       border: none;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -318,98 +345,75 @@
       z-index: 200;
     }
 
-    /* Responsive - Portrait phones */
-    @media (max-width: 480px) {
-      .play-area {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0.5rem 1rem;
-      }
-      .play-area .answer-btn {
-        display: none;
-      }
-      .answer-buttons-mobile {
-        display: flex !important;
-      }
-      .card-content { font-size: 2rem; }
-      .flashcard { height: 220px; max-width: 320px; }
+    /* Landscape mode */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .header { padding: 0.4rem 1rem; }
+      .header-title { font-size: 0.85rem; }
+      .header-icon { font-size: 1.2rem; }
+      .play-area { padding: 0.5rem; gap: 0.5rem; flex-direction: row; }
+      .flashcard-wrapper { max-width: 320px; }
+      .flashcard { max-height: 180px; }
+      .transport { flex-direction: column; gap: 0.8rem; }
+      .transport-btn { width: 50px; height: 50px; font-size: 1.3rem; }
+      .transport-btn.back { width: 40px; height: 40px; font-size: 1rem; }
     }
 
-    /* Mobile answer buttons (below card on small screens) */
-    .answer-buttons-mobile {
-      display: none;
-      justify-content: center;
-      gap: 2rem;
-      padding: 0.5rem;
+    /* Small phones */
+    @media (max-height: 600px) and (orientation: portrait) {
+      .flashcard { max-height: 200px; }
+      .card-content { font-size: 1.8rem; }
+      .transport-btn { width: 54px; height: 54px; font-size: 1.4rem; }
     }
 
-    .answer-buttons-mobile .answer-btn {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .answer-buttons-mobile .answer-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* Landscape tablet optimization */
-    @media (min-width: 600px) and (max-height: 500px) {
-      .nav { padding: 0.5rem 1rem; }
-      .nav-back { width: 40px; height: 40px; font-size: 1.2rem; }
-      .nav-title h1 { font-size: 1rem; }
-      .nav-icon { font-size: 1.5rem; }
-      .progress-container { padding: 0.5rem 1rem; }
-      .play-area { height: calc(100vh - 100px); padding: 0.5rem 1rem; }
-      .flashcard { height: 200px; max-width: 340px; }
-      .card-content { font-size: 2rem; }
-      .answer-btn { width: 56px; height: 56px; font-size: 1.5rem; }
+    /* Very small screens */
+    @media (max-height: 500px) and (orientation: portrait) {
+      .header { padding: 0.4rem 0.8rem; }
+      .header-title { font-size: 0.85rem; }
+      .flashcard { max-height: 160px; }
+      .transport-btn { width: 48px; height: 48px; font-size: 1.2rem; }
+      .transport-btn.back { width: 36px; height: 36px; }
     }
   </style>
 </head>
 <body>
-  <nav class="nav">
-    <button class="nav-back" onclick="goBack()" aria-label="Go back">←</button>
-    <div class="nav-title">
-      <h1 id="navTitle">Flashcards</h1>
-      <span class="nav-subtitle" id="navSubtitle">Loading...</span>
+  <header class="header">
+    <span class="header-icon" id="headerIcon">⚡</span>
+    <div class="header-info">
+      <div class="header-title" id="headerTitle">Loading...</div>
+      <div class="header-subtitle" id="headerSubtitle">Flashcards</div>
     </div>
-    <span class="nav-icon" id="navIcon">⚡</span>
-  </nav>
+    <div class="header-progress">
+      <div class="header-count" id="progressCount">1 / 10</div>
+      <div class="header-accuracy" id="progressAccuracy">0% correct</div>
+    </div>
+  </header>
 
-  <div class="progress-container">
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="progress-text">
-      <span id="progressCount">0 / 0</span>
-      <span id="progressAccuracy">0% correct</span>
-    </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
 
-  <div class="play-area">
-    <button class="answer-btn wrong" id="btnWrong" onclick="answer(false)" aria-label="Wrong">✗</button>
-
-    <div class="flashcard" id="flashcard" onclick="flipCard()">
-      <div class="card-face card-front">
-        <div class="card-content" id="cardFront">Loading...</div>
-        <div class="tap-hint">Tap to flip</div>
-      </div>
-      <div class="card-face card-back">
-        <div class="card-content" id="cardBack"></div>
-        <div class="card-hint" id="cardHint"></div>
+  <main class="play-area">
+    <div class="flashcard-wrapper">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="card-content" id="cardFront">Loading...</div>
+          <div class="tap-hint">Tap to flip</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-content" id="cardBack"></div>
+          <div class="card-hint" id="cardHint"></div>
+        </div>
       </div>
     </div>
 
-    <button class="answer-btn correct" id="btnCorrect" onclick="answer(true)" aria-label="Correct">✓</button>
-  </div>
+    <div class="transport">
+      <button class="transport-btn back" onclick="goBack()" aria-label="Exit">←</button>
+      <button class="transport-btn wrong" id="btnWrong" onclick="answer(false)" aria-label="Wrong">✗</button>
+      <button class="transport-btn correct" id="btnCorrect" onclick="answer(true)" aria-label="Correct">✓</button>
+    </div>
+  </main>
 
-  <div class="answer-buttons-mobile">
-    <button class="answer-btn wrong" id="btnWrongMobile" onclick="answer(false)" aria-label="Wrong">✗</button>
-    <button class="answer-btn correct" id="btnCorrectMobile" onclick="answer(true)" aria-label="Correct">✓</button>
-  </div>
-
-  <div class="complete-overlay" id="completeOverlay" onclick="goBack()">
+  <div class="complete-overlay" id="completeOverlay">
     <div class="complete-icon">🎉</div>
     <div class="complete-title">Great Job!</div>
     <div class="complete-stats">
@@ -422,7 +426,7 @@
         <div class="complete-stat-label">Accuracy</div>
       </div>
     </div>
-    <button class="complete-btn">Done</button>
+    <button class="complete-btn" onclick="goBack()">Done</button>
   </div>
 
   <canvas id="confetti"></canvas>
@@ -430,7 +434,6 @@
   <script type="module" src="../js/firebase-config.js"></script>
   <script src="../js/storage.js"></script>
   <script>
-    // Get URL parameters
     const params = new URLSearchParams(window.location.search);
     const contentId = params.get('id');
     const studentId = params.get('student') || 'guest';
@@ -443,12 +446,10 @@
     let contentData = null;
 
     async function init() {
-      // Enable cloud sync
       if (window.MokshFirebase) {
         await Moksh.enableCloudSync();
       }
 
-      // Load content
       try {
         const response = await fetch('../data/content.json');
         const data = await response.json();
@@ -459,24 +460,19 @@
           return;
         }
 
-        // Load catalog for subject info
         const catalogRes = await fetch('../data/catalog.json');
         const catalog = await catalogRes.json();
         const subject = catalog.subjects[contentData.subject];
 
-        // Update UI
-        document.getElementById('navTitle').textContent = contentData.name;
-        document.getElementById('navSubtitle').textContent = subject.name;
-        document.getElementById('navIcon').textContent = contentData.icon || subject.icon;
+        document.getElementById('headerTitle').textContent = contentData.name;
+        document.getElementById('headerSubtitle').textContent = subject.name;
+        document.getElementById('headerIcon').textContent = contentData.icon || subject.icon;
         document.documentElement.style.setProperty('--accent', subject.color);
 
-        // Shuffle and prepare cards
         cards = [...contentData.items].sort(() => Math.random() - 0.5);
         total = cards.length;
 
-        // Start session
         Moksh.startSession(studentId, contentId);
-
         showCard();
       } catch (error) {
         console.error('Error loading content:', error);
@@ -485,7 +481,6 @@
     }
 
     function showCard() {
-      // Only called on initial load
       if (currentIndex >= cards.length) {
         showComplete();
         return;
@@ -496,52 +491,38 @@
       document.getElementById('cardBack').textContent = card.back;
       document.getElementById('cardHint').textContent = card.highlight ? `Sound: ${card.highlight}` : '';
 
-      // Ensure card starts unflipped
       isFlipped = false;
       document.getElementById('flashcard').classList.remove('flipped');
-      setButtonsVisible(false);
-
+      setButtonsActive(false);
       updateProgress();
     }
 
     function flipCard() {
       if (isFlipped) return;
-
       isFlipped = true;
       document.getElementById('flashcard').classList.add('flipped');
-      setButtonsVisible(true);
+      setButtonsActive(true);
     }
 
-    function setButtonsVisible(visible) {
-      const btns = document.querySelectorAll('.answer-btn');
-      btns.forEach(btn => {
-        if (visible) {
-          btn.classList.add('visible');
-        } else {
-          btn.classList.remove('visible');
-        }
-      });
+    function setButtonsActive(active) {
+      document.getElementById('btnWrong').classList.toggle('active', active);
+      document.getElementById('btnCorrect').classList.toggle('active', active);
     }
 
     function answer(isCorrect) {
       if (isCorrect) correct++;
-
       Moksh.recordAnswer(studentId, contentId, isCorrect);
-
       currentIndex++;
 
-      // Hide buttons and flip card back first
-      setButtonsVisible(false);
+      setButtonsActive(false);
       document.getElementById('flashcard').classList.remove('flipped');
       isFlipped = false;
 
-      // Wait for flip animation (600ms) before updating content
       setTimeout(() => {
         if (currentIndex >= cards.length) {
           showComplete();
           return;
         }
-
         const card = cards[currentIndex];
         document.getElementById('cardFront').textContent = card.front;
         document.getElementById('cardBack').textContent = card.back;
@@ -551,7 +532,7 @@
     }
 
     function updateProgress() {
-      const progress = ((currentIndex) / total) * 100;
+      const progress = (currentIndex / total) * 100;
       const accuracy = currentIndex > 0 ? Math.round((correct / currentIndex) * 100) : 0;
 
       document.getElementById('progressFill').style.width = `${progress}%`;
@@ -561,11 +542,9 @@
 
     function showComplete() {
       const accuracy = Math.round((correct / total) * 100);
-
       document.getElementById('finalCorrect').textContent = correct;
       document.getElementById('finalAccuracy').textContent = `${accuracy}%`;
       document.getElementById('completeOverlay').classList.add('visible');
-
       Moksh.endSession(studentId, contentId);
       launchConfetti();
     }
@@ -579,11 +558,11 @@
       const pieces = [];
       const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#1dd1a1'];
 
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 100; i++) {
         pieces.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height - canvas.height,
-          r: Math.random() * 6 + 4,
+          r: Math.random() * 5 + 3,
           d: Math.random() * 150,
           color: colors[Math.floor(Math.random() * colors.length)],
           tiltAngle: Math.random() * Math.PI,
@@ -601,19 +580,16 @@
           ctx.rotate(p.tiltAngle);
           ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
           ctx.restore();
-
-          p.y += 3 + Math.random() * 2;
-          p.x += Math.sin(p.d) * 0.5;
+          p.y += 2.5 + Math.random() * 1.5;
+          p.x += Math.sin(p.d) * 0.4;
           p.tiltAngle += p.tiltSpeed;
-
           if (p.y > canvas.height) {
             p.y = -10;
             p.x = Math.random() * canvas.width;
           }
         });
-
         frame++;
-        if (frame < 180) {
+        if (frame < 150) {
           requestAnimationFrame(draw);
         } else {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -627,12 +603,9 @@
     }
 
     function goBack() {
-      // Save progress if incomplete
       if (currentIndex > 0 && currentIndex < total) {
         Moksh.endSession(studentId, contentId);
       }
-
-      // Navigate back to dashboard
       if (studentId && studentId !== 'guest') {
         window.location.href = `../dashboard.html?student=${studentId}`;
       } else {
@@ -640,10 +613,9 @@
       }
     }
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') goBack();
-      if (e.key === ' ' || e.key === 'Enter') flipCard();
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
       if (e.key === 'ArrowLeft' && isFlipped) answer(false);
       if (e.key === 'ArrowRight' && isFlipped) answer(true);
     });
