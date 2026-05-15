@@ -415,6 +415,24 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .sync-status {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 100;
+    }
+
+    .sync-status.synced {
+      color: var(--success);
+      border-color: var(--success);
+    }
   </style>
 </head>
 <body>
@@ -452,7 +470,9 @@
   </div>
 
   <div class="toast" id="toast">Saved!</div>
+  <div class="sync-status" id="syncStatus">☁️ Syncing...</div>
 
+  <script type="module" src="../js/firebase-config.js"></script>
   <script src="../js/storage.js"></script>
   <script>
     // All available activities with URLs for preview
@@ -493,7 +513,31 @@
     let draggedActivity = null;
     let selectedActivity = null; // For tap-to-assign on touch devices
 
-    function init() {
+    async function init() {
+      // Enable cloud sync
+      setTimeout(async () => {
+        if (window.MokshFirebase) {
+          const synced = await Moksh.enableCloudSync();
+          if (synced) {
+            document.getElementById('syncStatus').textContent = '☁️ Synced';
+            document.getElementById('syncStatus').classList.add('synced');
+            // Re-render with cloud data
+            renderKidsOverview();
+            renderActivityList();
+            renderChildrenColumns();
+            // Listen for updates from other devices
+            Moksh.onSyncUpdate(() => {
+              renderKidsOverview();
+              renderActivityList();
+              renderChildrenColumns();
+              showToast('Updated from another device!');
+            });
+          }
+        } else {
+          document.getElementById('syncStatus').textContent = '📱 Local only';
+        }
+      }, 1000); // Wait for Firebase module to load
+
       renderKidsOverview();
       renderActivityList();
       renderChildrenColumns();

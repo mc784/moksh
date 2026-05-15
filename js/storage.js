@@ -1,9 +1,13 @@
 /**
  * Moksh Learning Platform - Storage & Stats System
  * Tracks progress, streaks, accuracy per child
+ * Syncs with Firebase for cross-device access
  */
 
 const Moksh = {
+  _cloudSyncEnabled: false,
+  _unsubscribe: null,
+
   // Initialize or get existing data
   init() {
     if (!localStorage.getItem('moksh')) {
@@ -24,6 +28,10 @@ const Moksh = {
 
   save(data) {
     localStorage.setItem('moksh', JSON.stringify(data));
+    // Sync to cloud if enabled
+    if (this._cloudSyncEnabled) {
+      this.syncToCloud();
+    }
   },
 
   // Profile Management
@@ -234,6 +242,70 @@ const Moksh = {
   getChildren() {
     const profiles = this.getProfiles();
     return Object.values(profiles).filter(p => p.id !== 'parent');
+  },
+
+  // Cloud Sync Methods
+  async enableCloudSync() {
+    if (!window.MokshFirebase) {
+      console.log('Firebase not loaded, cloud sync disabled');
+      return false;
+    }
+
+    this._cloudSyncEnabled = true;
+
+    // Load from cloud first
+    const cloudData = await window.MokshFirebase.loadFromCloud();
+    if (cloudData) {
+      const localData = this.init();
+      // Merge: cloud assignments take priority
+      if (cloudData.assignments) {
+        localData.assignments = cloudData.assignments;
+      }
+      if (cloudData.profiles) {
+        // Merge profiles, keeping local stats if newer
+        Object.keys(cloudData.profiles).forEach(id => {
+          if (!localData.profiles[id]) {
+            localData.profiles[id] = cloudData.profiles[id];
+          }
+        });
+      }
+      localStorage.setItem('moksh', JSON.stringify(localData));
+      console.log('Loaded data from cloud');
+    }
+
+    // Listen for real-time updates
+    this._unsubscribe = window.MokshFirebase.listenForUpdates((cloudData) => {
+      if (cloudData) {
+        const localData = this.init();
+        if (cloudData.assignments) {
+          localData.assignments = cloudData.assignments;
+        }
+        localStorage.setItem('moksh', JSON.stringify(localData));
+        console.log('Real-time update received');
+        // Trigger UI refresh if callback is set
+        if (this._onSyncCallback) this._onSyncCallback();
+      }
+    });
+
+    return true;
+  },
+
+  async syncToCloud() {
+    if (!this._cloudSyncEnabled || !window.MokshFirebase) return;
+    const data = this.init();
+    await window.MokshFirebase.saveToCloud(data);
+  },
+
+  onSyncUpdate(callback) {
+    this._onSyncCallback = callback;
+  },
+
+  disableCloudSync() {
+    if (this._unsubscribe) {
+      this._unsubscribe();
+      this._unsubscribe = null;
+    }
+    this._cloudSyncEnabled = false;
   }
 };
 
