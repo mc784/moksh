@@ -485,6 +485,7 @@
     }
 
     function showCard() {
+      // Only called on initial load
       if (currentIndex >= cards.length) {
         showComplete();
         return;
@@ -495,7 +496,7 @@
       document.getElementById('cardBack').textContent = card.back;
       document.getElementById('cardHint').textContent = card.highlight ? `Sound: ${card.highlight}` : '';
 
-      // Reset card state
+      // Ensure card starts unflipped
       isFlipped = false;
       document.getElementById('flashcard').classList.remove('flipped');
       setButtonsVisible(false);
@@ -529,8 +530,24 @@
 
       currentIndex++;
 
-      // Small delay before next card
-      setTimeout(showCard, 300);
+      // Hide buttons and flip card back first
+      setButtonsVisible(false);
+      document.getElementById('flashcard').classList.remove('flipped');
+      isFlipped = false;
+
+      // Wait for flip animation (600ms) before updating content
+      setTimeout(() => {
+        if (currentIndex >= cards.length) {
+          showComplete();
+          return;
+        }
+
+        const card = cards[currentIndex];
+        document.getElementById('cardFront').textContent = card.front;
+        document.getElementById('cardBack').textContent = card.back;
+        document.getElementById('cardHint').textContent = card.highlight ? `Sound: ${card.highlight}` : '';
+        updateProgress();
+      }, 350);
     }
 
     function updateProgress() {
