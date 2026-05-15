@@ -244,9 +244,18 @@
     <span class="mini-stat-arrow">→</span>
   </a>
 
+  <script type="module" src="../js/firebase-config.js"></script>
   <script src="../js/storage.js"></script>
   <script>
     const userId = 'kainav';
+
+    // Enable cloud sync for assignments
+    setTimeout(async () => {
+      if (window.MokshFirebase) {
+        await Moksh.enableCloudSync();
+        renderAssignments(); // Re-render with cloud data
+      }
+    }, 1000);
 
     // All activities
     const allActivities = [
