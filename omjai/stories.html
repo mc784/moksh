@@ -1054,7 +1054,8 @@
       if (wordsSpoken > 0 && wordsSpoken < totalWords) {
         Moksh.endSession(userId, `phonics-${storyId}`);
       }
-      window.history.back();
+      // Navigate to dashboard (history.back may not work if direct link)
+      window.location.href = 'index.html';
     }
 
     // Keyboard shortcuts
