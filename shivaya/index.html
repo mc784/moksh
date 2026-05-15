@@ -86,36 +86,32 @@
       color: #fb923c;
     }
 
-    /* Stats row */
-    .stats-row {
+    /* Mini stats bar */
+    .stats-mini {
       display: flex;
-      gap: 1rem;
-      padding: 0 2rem;
-      margin-bottom: 2rem;
-      overflow-x: auto;
-    }
-
-    .stat-card {
-      flex: 1;
-      min-width: 100px;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      margin: 1rem 2rem 2rem;
       background: var(--surface);
-      border-radius: 16px;
-      padding: 1.2rem;
-      text-align: center;
+      border-radius: 30px;
       border: 1px solid rgba(255,255,255,0.05);
     }
 
-    .stat-card .value {
-      font-size: 1.8rem;
-      font-weight: 700;
+    .mini-stat {
+      font-size: 0.85rem;
+      color: var(--muted);
     }
 
-    .stat-card .label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 0.3rem;
+    .mini-stat span {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .mini-stat-arrow {
+      color: var(--accent);
+      font-weight: 600;
     }
 
     /* Section */
@@ -234,35 +230,19 @@
     </div>
   </header>
 
-  <a href="stats.html" class="stats-row" id="statsRow" style="text-decoration: none; color: inherit;">
-    <div class="stat-card">
-      <div class="value" id="statSessions">0</div>
-      <div class="label">Sessions</div>
-    </div>
-    <div class="stat-card">
-      <div class="value" id="statTime">0m</div>
-      <div class="label">Time</div>
-    </div>
-    <div class="stat-card">
-      <div class="value" id="statAccuracy">-</div>
-      <div class="label">Accuracy</div>
-    </div>
-    <div class="stat-card">
-      <div class="value" id="statBest">-</div>
-      <div class="label">Best</div>
-    </div>
-    <div class="stat-card" style="background: linear-gradient(135deg, var(--accent), #a855f7); min-width: 60px;">
-      <div class="value" style="font-size: 1.5rem;">→</div>
-      <div class="label">Stats</div>
-    </div>
-  </a>
-
   <div class="section">
     <h3 class="section-title">Your Assignments</h3>
     <div class="activity-grid" id="assignmentsGrid">
       <!-- Assignments loaded dynamically -->
     </div>
   </div>
+
+  <a href="stats.html" class="stats-mini" id="statsRow" style="text-decoration: none; color: inherit;">
+    <span class="mini-stat">📊 <span id="statSessions">0</span> sessions</span>
+    <span class="mini-stat">⏱️ <span id="statTime">0m</span></span>
+    <span class="mini-stat">🎯 <span id="statAccuracy">-</span></span>
+    <span class="mini-stat-arrow">→</span>
+  </a>
 
   <script src="../js/storage.js"></script>
   <script>
@@ -309,13 +289,6 @@
         document.getElementById('streakBadge').textContent = stats.currentStreak > 0
           ? `🔥 ${stats.currentStreak} day${stats.currentStreak > 1 ? 's' : ''}`
           : '💤 Start streak!';
-
-        // Find best accuracy
-        const profile = Moksh.getProfile(userId);
-        if (profile?.activities) {
-          const best = Math.max(...Object.values(profile.activities).map(a => a.bestAccuracy || 0));
-          document.getElementById('statBest').textContent = best > 0 ? `${Math.round(best)}%` : '-';
-        }
       }
     }
 
