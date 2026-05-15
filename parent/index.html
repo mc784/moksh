@@ -189,6 +189,22 @@
       transform: scale(0.95);
     }
 
+    .activity-item.selected {
+      border-color: var(--success);
+      background: rgba(34, 197, 94, 0.15);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+    }
+
+    .child-column.tap-ready {
+      border: 2px dashed var(--success);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     .activity-item .icon {
       font-size: 1.5rem;
     }
@@ -424,7 +440,7 @@
   <div class="section">
     <h3 class="section-title">Assign Activities</h3>
     <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
-      Hover and click ▶ to preview any activity. Drag activities to assign them to children.
+      Tap an activity to select it, then tap a child to assign. Or drag activities on desktop. Click ▶ to preview.
     </p>
     <div class="assignment-grid">
       <div class="activity-list">
@@ -475,6 +491,7 @@
     ];
 
     let draggedActivity = null;
+    let selectedActivity = null; // For tap-to-assign on touch devices
 
     function init() {
       renderKidsOverview();
@@ -515,7 +532,9 @@
     function renderActivityList() {
       const container = document.getElementById('activityList');
       container.innerHTML = allActivities.map(a => `
-        <div class="activity-item" draggable="true" data-id="${a.id}"
+        <div class="activity-item ${selectedActivity === a.id ? 'selected' : ''}"
+             draggable="true" data-id="${a.id}"
+             onclick="selectActivity('${a.id}')"
              ondragstart="handleDragStart(event, '${a.id}')"
              ondragend="handleDragEnd(event)">
           <span class="icon">${a.icon}</span>
@@ -523,9 +542,18 @@
             <div class="name">${a.name}</div>
             <div class="type">${a.type}</div>
           </div>
-          <button class="open-btn" onclick="openActivity('${a.id}')" title="Preview">▶</button>
+          <button class="open-btn" onclick="event.stopPropagation(); openActivity('${a.id}')" title="Preview">▶</button>
         </div>
       `).join('');
+    }
+
+    function selectActivity(activityId) {
+      if (selectedActivity === activityId) {
+        selectedActivity = null; // Deselect if already selected
+      } else {
+        selectedActivity = activityId;
+      }
+      renderActivityList();
     }
 
     function openActivity(activityId) {
@@ -540,7 +568,8 @@
       container.innerHTML = children.map(child => {
         const assignments = Moksh.getAssignments(child.id);
         return `
-          <div class="child-column" data-child="${child.id}"
+          <div class="child-column ${selectedActivity ? 'tap-ready' : ''}" data-child="${child.id}"
+               onclick="tapAssign('${child.id}')"
                ondragover="handleDragOver(event)"
                ondragleave="handleDragLeave(event)"
                ondrop="handleDrop(event, '${child.id}')">
@@ -554,6 +583,18 @@
           </div>
         `;
       }).join('');
+    }
+
+    function tapAssign(childId) {
+      if (selectedActivity) {
+        Moksh.assignActivity(childId, selectedActivity);
+        updateChildColumn(childId);
+        renderKidsOverview();
+        showToast('Activity assigned!');
+        selectedActivity = null;
+        renderActivityList();
+        renderChildrenColumns();
+      }
     }
 
     function renderAssignedActivities(childId, assignments) {
