@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Worksheet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --surface3: #282836;
+      --accent: #6366f1;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover { background: var(--accent); }
+
+    .header-info { flex: 1; }
+
+    .header-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .header-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .header-progress {
+      text-align: right;
+    }
+
+    .header-score {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .header-total {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      height: 4px;
+      background: var(--surface2);
+      position: sticky;
+      top: 64px;
+      z-index: 49;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    /* Questions List */
+    .questions-list {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Question Card */
+    .question-card {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .question-card.correct {
+      border-color: var(--success);
+    }
+
+    .question-card.wrong {
+      border-color: var(--error);
+    }
+
+    .question-card.correct .card-status {
+      background: var(--success);
+    }
+
+    .question-card.wrong .card-status {
+      background: var(--error);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 1rem;
+      cursor: pointer;
+    }
+
+    .card-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .question-card.correct .card-number {
+      background: var(--success);
+    }
+
+    .question-card.wrong .card-number {
+      background: var(--error);
+    }
+
+    .card-question {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .card-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .card-toggle:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .question-card.expanded .card-toggle {
+      transform: rotate(180deg);
+    }
+
+    /* Expandable Content */
+    .card-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .question-card.expanded .card-content {
+      max-height: 500px;
+    }
+
+    .card-inner {
+      padding: 0 1rem 1rem;
+    }
+
+    /* Action Buttons */
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .hint-btn {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .hint-btn:hover {
+      background: var(--warning);
+      color: black;
+    }
+
+    .answer-btn {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .answer-btn:hover {
+      background: var(--accent);
+    }
+
+    /* Hint & Answer Boxes */
+    .hint-box, .answer-box {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+      display: none;
+      white-space: pre-line;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .hint-box.visible, .answer-box.visible {
+      display: block;
+    }
+
+    .hint-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .hint-box-title {
+      font-size: 0.75rem;
+      color: var(--warning);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .hint-box-content {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      color: var(--text);
+    }
+
+    .answer-box {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .answer-box-title {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .answer-box-content {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Self Assessment */
+    .self-assess {
+      display: none;
+      gap: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .self-assess.visible {
+      display: flex;
+    }
+
+    .assess-btn {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .assess-btn.got-it {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+    }
+
+    .assess-btn.got-it:hover {
+      background: var(--success);
+      color: white;
+    }
+
+    .assess-btn.need-practice {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+    }
+
+    .assess-btn.need-practice:hover {
+      background: var(--error);
+      color: white;
+    }
+
+    /* Completion Summary */
+    .summary-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      padding: 2rem;
+    }
+
+    .summary-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .summary-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .summary-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-subtitle {
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .summary-stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-stat {
+      text-align: center;
+    }
+
+    .summary-stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .summary-stat-value.correct { color: var(--success); }
+    .summary-stat-value.wrong { color: var(--error); }
+    .summary-stat-value.accuracy { color: var(--accent); }
+
+    .summary-stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .summary-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .summary-btn {
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .summary-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .summary-btn.primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .summary-btn.secondary {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .summary-btn.secondary:hover {
+      background: var(--surface3);
+    }
+
+    /* Responsive */
+    @media (max-width: 400px) {
+      .card-question { font-size: 0.9rem; }
+      .action-btn { font-size: 0.8rem; padding: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-info">
+      <div class="header-title" id="headerTitle">Loading...</div>
+      <div class="header-subtitle" id="headerSubtitle">Worksheet</div>
+    </div>
+    <div class="header-progress">
+      <div class="header-score" id="headerScore">0 / 0</div>
+      <div class="header-total">completed</div>
+    </div>
+  </header>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="questions-list" id="questionsList"></div>
+
+  <div class="summary-overlay" id="summaryOverlay">
+    <div class="summary-icon" id="summaryIcon">🎉</div>
+    <div class="summary-title" id="summaryTitle">Great Work!</div>
+    <div class="summary-subtitle" id="summarySubtitle">You've completed the worksheet</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <div class="summary-stat-value correct" id="summaryCorrect">0</div>
+        <div class="summary-stat-label">Correct</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-value wrong" id="summaryWrong">0</div>
+        <div class="summary-stat-label">Need Practice</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-value accuracy" id="summaryAccuracy">0%</div>
+        <div class="summary-stat-label">Accuracy</div>
+      </div>
+    </div>
+    <div class="summary-actions">
+      <button class="summary-btn secondary" onclick="reviewWrong()">Review Mistakes</button>
+      <button class="summary-btn primary" onclick="goBack()">Done</button>
+    </div>
+  </div>
+
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const contentId = params.get('id');
+    const studentId = params.get('student') || 'guest';
+
+    let items = [];
+    let results = {}; // { index: 'correct' | 'wrong' }
+    let contentData = null;
+
+    async function init() {
+      if (window.MokshFirebase) {
+        await Moksh.enableCloudSync();
+      }
+
+      try {
+        const response = await fetch('../data/content.json');
+        const data = await response.json();
+        contentData = data.content.find(c => c.id === contentId);
+
+        if (!contentData || contentData.format !== 'worksheet') {
+          showError('Content not found');
+          return;
+        }
+
+        const catalogRes = await fetch('../data/catalog.json');
+        const catalog = await catalogRes.json();
+        const subject = catalog.subjects[contentData.subject];
+
+        document.getElementById('headerTitle').textContent = contentData.name;
+        document.getElementById('headerSubtitle').textContent = subject.name;
+        document.documentElement.style.setProperty('--accent', subject.color);
+
+        items = contentData.items;
+        Moksh.startSession(studentId, contentId);
+        renderQuestions();
+        updateProgress();
+      } catch (error) {
+        console.error('Error loading content:', error);
+        showError('Failed to load');
+      }
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsList');
+
+      container.innerHTML = items.map((item, index) => {
+        // Extract just the question text (remove "Ex N:" prefix for cleaner display)
+        const questionText = item.front;
+
+        return `
+          <div class="question-card" id="card-${index}" data-index="${index}">
+            <div class="card-header" onclick="toggleCard(${index})">
+              <div class="card-number">${index + 1}</div>
+              <div class="card-question">${questionText}</div>
+              <button class="card-toggle">▼</button>
+            </div>
+            <div class="card-content">
+              <div class="card-inner">
+                <div class="card-actions">
+                  <button class="action-btn hint-btn" onclick="event.stopPropagation(); showHint(${index})">
+                    💡 Show Hint
+                  </button>
+                  <button class="action-btn answer-btn" onclick="event.stopPropagation(); showAnswer(${index})">
+                    ✨ Show Answer
+                  </button>
+                </div>
+
+                <div class="hint-box" id="hint-${index}">
+                  <div class="hint-box-title">💡 Hint</div>
+                  <div class="hint-box-content">${item.hint || 'No hint available'}</div>
+                </div>
+
+                <div class="answer-box" id="answer-${index}">
+                  <div class="answer-box-title">✨ Answer</div>
+                  <div class="answer-box-content">${item.back}</div>
+                </div>
+
+                <div class="self-assess" id="assess-${index}">
+                  <button class="assess-btn got-it" onclick="event.stopPropagation(); markResult(${index}, 'correct')">
+                    ✓ Got it!
+                  </button>
+                  <button class="assess-btn need-practice" onclick="event.stopPropagation(); markResult(${index}, 'wrong')">
+                    ✗ Need practice
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCard(index) {
+      const card = document.getElementById(`card-${index}`);
+      const wasExpanded = card.classList.contains('expanded');
+
+      // Close all cards
+      document.querySelectorAll('.question-card').forEach(c => c.classList.remove('expanded'));
+
+      // Open this one if it wasn't already open
+      if (!wasExpanded) {
+        card.classList.add('expanded');
+        // Scroll card into view
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
+
+    function showHint(index) {
+      document.getElementById(`hint-${index}`).classList.add('visible');
+    }
+
+    function showAnswer(index) {
+      document.getElementById(`answer-${index}`).classList.add('visible');
+      document.getElementById(`assess-${index}`).classList.add('visible');
+    }
+
+    function markResult(index, result) {
+      results[index] = result;
+
+      const card = document.getElementById(`card-${index}`);
+      card.classList.remove('correct', 'wrong');
+      card.classList.add(result);
+      card.classList.remove('expanded');
+
+      // Record in Moksh
+      Moksh.recordAnswer(studentId, contentId, result === 'correct');
+
+      updateProgress();
+
+      // Check if all done
+      if (Object.keys(results).length === items.length) {
+        setTimeout(showSummary, 500);
+      } else {
+        // Auto-open next unanswered card
+        const nextIndex = items.findIndex((_, i) => results[i] === undefined);
+        if (nextIndex !== -1) {
+          setTimeout(() => toggleCard(nextIndex), 300);
+        }
+      }
+    }
+
+    function updateProgress() {
+      const completed = Object.keys(results).length;
+      const correct = Object.values(results).filter(r => r === 'correct').length;
+      const total = items.length;
+      const progress = (completed / total) * 100;
+
+      document.getElementById('progressFill').style.width = `${progress}%`;
+      document.getElementById('headerScore').textContent = `${completed} / ${total}`;
+    }
+
+    function showSummary() {
+      const correct = Object.values(results).filter(r => r === 'correct').length;
+      const wrong = Object.values(results).filter(r => r === 'wrong').length;
+      const total = items.length;
+      const accuracy = Math.round((correct / total) * 100);
+
+      document.getElementById('summaryCorrect').textContent = correct;
+      document.getElementById('summaryWrong').textContent = wrong;
+      document.getElementById('summaryAccuracy').textContent = `${accuracy}%`;
+
+      // Set icon and message based on performance
+      const icon = document.getElementById('summaryIcon');
+      const title = document.getElementById('summaryTitle');
+
+      if (accuracy >= 90) {
+        icon.textContent = '🌟';
+        title.textContent = 'Excellent!';
+      } else if (accuracy >= 70) {
+        icon.textContent = '🎉';
+        title.textContent = 'Great Work!';
+      } else if (accuracy >= 50) {
+        icon.textContent = '💪';
+        title.textContent = 'Good Effort!';
+      } else {
+        icon.textContent = '📚';
+        title.textContent = 'Keep Practicing!';
+      }
+
+      document.getElementById('summaryOverlay').classList.add('visible');
+      Moksh.endSession(studentId, contentId);
+    }
+
+    function reviewWrong() {
+      document.getElementById('summaryOverlay').classList.remove('visible');
+
+      // Find first wrong answer and scroll to it
+      const wrongIndex = Object.entries(results).find(([_, r]) => r === 'wrong');
+      if (wrongIndex) {
+        const card = document.getElementById(`card-${wrongIndex[0]}`);
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toggleCard(parseInt(wrongIndex[0]));
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('questionsList').innerHTML = `
+        <div style="text-align: center; padding: 3rem; color: var(--muted);">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">😕</div>
+          <div>${message}</div>
+        </div>
+      `;
+    }
+
+    function goBack() {
+      if (Object.keys(results).length > 0 && Object.keys(results).length < items.length) {
+        Moksh.endSession(studentId, contentId);
+      }
+      if (studentId && studentId !== 'guest') {
+        window.location.href = `../dashboard.html?student=${studentId}`;
+      } else {
+        window.history.back();
+      }
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('summaryOverlay');
+        if (overlay.classList.contains('visible')) {
+          overlay.classList.remove('visible');
+        } else {
+          goBack();
+        }
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

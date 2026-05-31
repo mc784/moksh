@@ -117,6 +117,12 @@
       "name": "Quiz",
       "icon": "✓",
       "description": "Multiple choice"
+    },
+    "worksheet": {
+      "id": "worksheet",
+      "name": "Worksheet",
+      "icon": "📝",
+      "description": "Problem sets with hints"
     }
   },
 

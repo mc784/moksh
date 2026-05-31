@@ -433,6 +433,8 @@
         let url = '';
         if (content.format === 'flashcard') {
           url = `learn/flashcard.html?id=${content.id}&student=${studentId}`;
+        } else if (content.format === 'worksheet') {
+          url = `learn/worksheet.html?id=${content.id}&student=${studentId}`;
         } else if (content.format === 'story' || content.format === 'story-qa') {
           url = `learn/story.html?id=${content.id}&student=${studentId}`;
         }
