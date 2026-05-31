@@ -414,6 +414,79 @@
       ]
     },
     {
+      "id": "math-algebra-simplify",
+      "subject": "math",
+      "topic": "algebra",
+      "format": "flashcard",
+      "name": "Level 4: Simplifying Expressions",
+      "nameHi": "स्तर 4: व्यंजक सरल करें",
+      "icon": "✨",
+      "difficulty": 3,
+      "ageRange": [10, 14],
+      "items": [
+        {
+          "front": "Ex 1\n\nSimplify:\n3x + 2y − x + 5",
+          "back": "2x + 2y + 5",
+          "hint": "Group like terms:\n\nx terms: 3x − x = 2x\ny terms: 2y = 2y\nconstants: 5 = 5\n\nAnswer: 2x + 2y + 5"
+        },
+        {
+          "front": "Ex 2\n\nSimplify:\n4a + 3b − 2a + b − 3",
+          "back": "2a + 4b − 3",
+          "hint": "Group like terms:\n\na terms: 4a − 2a = 2a\nb terms: 3b + b = 4b\nconstants: −3 = −3\n\nAnswer: 2a + 4b − 3"
+        },
+        {
+          "front": "Ex 3\n\nSimplify:\n5m + 7n − 3m − 2n + 4",
+          "back": "2m + 5n + 4",
+          "hint": "Group like terms:\n\nm terms: 5m − 3m = 2m\nn terms: 7n − 2n = 5n\nconstants: 4 = 4\n\nAnswer: 2m + 5n + 4"
+        },
+        {
+          "front": "Ex 4\n\nSimplify:\n2x + 3y + 4x − y + 6",
+          "back": "6x + 2y + 6",
+          "hint": "Group like terms:\n\nx terms: 2x + 4x = 6x\ny terms: 3y − y = 2y\nconstants: 6 = 6\n\nAnswer: 6x + 2y + 6"
+        },
+        {
+          "front": "Ex 5\n\nSimplify:\n6p − 4q + 2p + 3q − 8",
+          "back": "8p − q − 8",
+          "hint": "Group like terms:\n\np terms: 6p + 2p = 8p\nq terms: −4q + 3q = −q\nconstants: −8 = −8\n\nAnswer: 8p − q − 8"
+        },
+        {
+          "front": "Ex 6\n\nSimplify:\n−x + 5y + 3x − 2y + 1",
+          "back": "2x + 3y + 1",
+          "hint": "Group like terms:\n\nx terms: −x + 3x = 2x\ny terms: 5y − 2y = 3y\nconstants: 1 = 1\n\nAnswer: 2x + 3y + 1"
+        },
+        {
+          "front": "Ex 7\n\nSimplify:\n8a + 2b − 3a − b + 7 − 2",
+          "back": "5a + b + 5",
+          "hint": "Group like terms:\n\na terms: 8a − 3a = 5a\nb terms: 2b − b = b\nconstants: 7 − 2 = 5\n\nAnswer: 5a + b + 5"
+        },
+        {
+          "front": "Ex 8\n\nSimplify:\n3x − y + 2x + 4y − 5 + 3",
+          "back": "5x + 3y − 2",
+          "hint": "Group like terms:\n\nx terms: 3x + 2x = 5x\ny terms: −y + 4y = 3y\nconstants: −5 + 3 = −2\n\nAnswer: 5x + 3y − 2"
+        },
+        {
+          "front": "Ex 9\n\nSimplify:\n−2m + 6n + 5m − 3n + 4 − 9",
+          "back": "3m + 3n − 5",
+          "hint": "Group like terms:\n\nm terms: −2m + 5m = 3m\nn terms: 6n − 3n = 3n\nconstants: 4 − 9 = −5\n\nAnswer: 3m + 3n − 5"
+        },
+        {
+          "front": "Ex 10\n\nSimplify:\n7r + 2s − 4r + 3s − 6 + 1",
+          "back": "3r + 5s − 5",
+          "hint": "Group like terms:\n\nr terms: 7r − 4r = 3r\ns terms: 2s + 3s = 5s\nconstants: −6 + 1 = −5\n\nAnswer: 3r + 5s − 5"
+        },
+        {
+          "front": "Ex 11\n\nSimplify:\n4x + 3y − 2x − 5y + 10 − 3",
+          "back": "2x − 2y + 7",
+          "hint": "Group like terms:\n\nx terms: 4x − 2x = 2x\ny terms: 3y − 5y = −2y\nconstants: 10 − 3 = 7\n\nAnswer: 2x − 2y + 7"
+        },
+        {
+          "front": "Ex 12\n\nSimplify:\n−a + 8b + 6a − 3b + 2 + 5",
+          "back": "5a + 5b + 7",
+          "hint": "Group like terms:\n\na terms: −a + 6a = 5a\nb terms: 8b − 3b = 5b\nconstants: 2 + 5 = 7\n\nAnswer: 5a + 5b + 7"
+        }
+      ]
+    },
+    {
       "id": "science-facts",
       "subject": "science",
       "topic": "science-facts",

@@ -465,7 +465,9 @@
 
   <nav class="subject-tabs" id="subjectTabs"></nav>
 
-  <div class="format-filter" id="formatFilter"></div>
+  <div class="format-filter" id="topicFilter"></div>
+
+  <div class="format-filter" id="formatFilter" style="border-top: 1px solid rgba(255,255,255,0.03);"></div>
 
   <div class="legend">
     <div class="legend-item"><span class="legend-dot none"></span> Not assigned</div>
@@ -489,6 +491,7 @@
     let catalog = null;
     let allContent = [];
     let currentSubject = 'all';
+    let currentTopic = 'all';
     let currentFormat = 'all';
 
     async function init() {
@@ -525,6 +528,7 @@
     function renderAll() {
       renderStats();
       renderSubjectTabs();
+      renderTopicFilter();
       renderFormatFilter();
       renderContentGrid();
     }
@@ -598,13 +602,68 @@
       container.innerHTML = html;
     }
 
+    function renderTopicFilter() {
+      const container = document.getElementById('topicFilter');
+
+      // Hide topic filter if "All" subjects selected
+      if (currentSubject === 'all') {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'flex';
+
+      // Get topics for current subject that have content
+      const topicsInSubject = new Set();
+      allContent.forEach(c => {
+        if (c.subject === currentSubject && c.topic) {
+          topicsInSubject.add(c.topic);
+        }
+      });
+
+      // If only one topic or no topics, hide the filter
+      if (topicsInSubject.size <= 1) {
+        container.style.display = 'none';
+        return;
+      }
+
+      const topics = Object.values(catalog.topics)
+        .filter(t => topicsInSubject.has(t.id))
+        .sort((a, b) => a.order - b.order);
+
+      let html = `
+        <button class="format-chip ${currentTopic === 'all' ? 'active' : ''}"
+                onclick="selectTopic('all')">
+          All Topics
+        </button>
+      `;
+
+      topics.forEach(topic => {
+        const count = allContent.filter(c => c.topic === topic.id).length;
+        html += `
+          <button class="format-chip ${currentTopic === topic.id ? 'active' : ''}"
+                  onclick="selectTopic('${topic.id}')">
+            ${topic.icon} ${topic.name} (${count})
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
     function renderFormatFilter() {
       const formats = Object.values(catalog.formats);
       const container = document.getElementById('formatFilter');
 
-      // Get formats available in current subject
+      // Get formats available in current filters
       const availableFormats = new Set();
-      getFilteredContent(currentSubject, 'all').forEach(c => availableFormats.add(c.format));
+      getFilteredContent(currentSubject, currentTopic, 'all').forEach(c => availableFormats.add(c.format));
+
+      // Hide if only one format
+      if (availableFormats.size <= 1) {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'flex';
 
       let html = `
         <button class="format-chip ${currentFormat === 'all' ? 'active' : ''}"
@@ -614,7 +673,7 @@
       `;
 
       formats.forEach(format => {
-        if (currentSubject !== 'all' && !availableFormats.has(format.id)) return;
+        if (!availableFormats.has(format.id)) return;
         html += `
           <button class="format-chip ${currentFormat === format.id ? 'active' : ''}"
                   onclick="selectFormat('${format.id}')">
@@ -626,23 +685,25 @@
       container.innerHTML = html;
     }
 
-    function getFilteredContent(subject, format) {
+    function getFilteredContent(subject, topic, format) {
       return allContent.filter(c => {
         if (subject !== 'all' && c.subject !== subject) return false;
+        if (topic !== 'all' && c.topic !== topic) return false;
         if (format !== 'all' && c.format !== format) return false;
         return true;
       });
     }
 
     function renderContentGrid() {
-      const filtered = getFilteredContent(currentSubject, currentFormat);
+      const filtered = getFilteredContent(currentSubject, currentTopic, currentFormat);
       const container = document.getElementById('contentGrid');
       const students = Object.values(catalog.students).sort((a, b) => a.order - b.order);
 
       // Update header
       const subjectName = currentSubject === 'all' ? 'All Subjects' : catalog.subjects[currentSubject].name;
+      const topicName = currentTopic === 'all' ? '' : ` / ${catalog.topics[currentTopic].name}`;
       const formatName = currentFormat === 'all' ? '' : ` / ${catalog.formats[currentFormat].name}`;
-      document.getElementById('contentTitle').textContent = subjectName + formatName;
+      document.getElementById('contentTitle').textContent = subjectName + topicName + formatName;
       document.getElementById('contentCount').textContent = `${filtered.length} items`;
 
       if (filtered.length === 0) {
@@ -729,14 +790,21 @@
 
     function selectSubject(subjectId) {
       currentSubject = subjectId;
+      currentTopic = 'all'; // Reset topic when changing subject
       currentFormat = 'all'; // Reset format when changing subject
       renderAll();
+    }
+
+    function selectTopic(topicId) {
+      currentTopic = topicId;
+      currentFormat = 'all'; // Reset format when changing topic
+      renderFormatFilter();
+      renderContentGrid();
     }
 
     function selectFormat(formatId) {
       currentFormat = formatId;
       renderContentGrid();
-      renderFormatFilter();
     }
 
     function previewContent(contentId) {
