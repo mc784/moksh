@@ -751,8 +751,11 @@
       }
       if (studentId && studentId !== 'guest') {
         window.location.href = `../dashboard.html?student=${studentId}`;
-      } else {
+      } else if (window.history.length > 1) {
         window.history.back();
+      } else {
+        // Opened in new tab from parent dashboard - go to parent
+        window.location.href = '../parent.html';
       }
     }
 
