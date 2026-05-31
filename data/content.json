@@ -288,6 +288,69 @@
       ]
     },
     {
+      "id": "math-algebra-equations",
+      "subject": "math",
+      "topic": "algebra",
+      "format": "flashcard",
+      "name": "Solving Equations",
+      "nameHi": "समीकरण हल करें",
+      "icon": "🔢",
+      "difficulty": 2,
+      "ageRange": [9, 13],
+      "items": [
+        {
+          "front": "Ex 1: Video Game Fun 🎮\n\nEmma is buying video games. Each game costs $2, and she also buys snacks for $5. Her total bill is $13.\n\nHow many video games did she buy?",
+          "back": "4 games",
+          "hint": "Equation: 2x + 5 = 13\nx = number of games\n\n2x + 5 = 13\n2x = 13 - 5\n2x = 8\nx = 8 ÷ 2 = 4"
+        },
+        {
+          "front": "Ex 2: Marble Champion 🔵\n\nMiguel plays marble games and wins 3 marbles in each round. After winning, he loses 4 marbles accidentally. Now he has 8 marbles.\n\nHow many rounds did he win?",
+          "back": "4 rounds",
+          "hint": "Equation: 3y - 4 = 8\ny = number of rounds\n\n3y - 4 = 8\n3y = 8 + 4\n3y = 12\ny = 12 ÷ 3 = 4"
+        },
+        {
+          "front": "Ex 3: Lollipop Collection 🍭\n\nAt the candy store, each bag gives you 4 lollipops. You also get 2 bonus lollipops, but you drop 1 on the floor. You end up with 9 lollipops.\n\nHow many bags did you buy?",
+          "back": "2 bags",
+          "hint": "Equation: 4z + 2 - 1 = 9\nz = number of bags\n\n4z + 1 = 9\n4z = 9 - 1\n4z = 8\nz = 8 ÷ 4 = 2"
+        },
+        {
+          "front": "Ex 4: Soccer Star ⚽\n\nSarah is the soccer team's top scorer. She scores 5 points per goal, but the referee gave her a 3-point penalty. Her final score is 22 points.\n\nHow many goals did she score?",
+          "back": "5 goals",
+          "hint": "Equation: 5a - 3 = 22\na = number of goals\n\n5a - 3 = 22\n5a = 22 + 3\n5a = 25\na = 25 ÷ 5 = 5"
+        },
+        {
+          "front": "Ex 5: Chore Money 💰\n\nYou earn $2 for each chore. Your grandma gives you a $6 birthday gift. But you spend $2 on candy. Now you have $14 total.\n\nHow many chores did you do?",
+          "back": "5 chores",
+          "hint": "Equation: 2b + 6 - 2 = 14\nb = number of chores\n\n2b + 4 = 14\n2b = 14 - 4\n2b = 10\nb = 10 ÷ 2 = 5"
+        },
+        {
+          "front": "Ex 6: Book Collector 📚\n\nJake is organizing books on shelves. Each shelf holds 6 books, but he keeps 8 favorites on his desk. He has 10 books on shelves total.\n\nHow many shelves is he using?",
+          "back": "3 shelves",
+          "hint": "Equation: 6c - 8 = 10\nc = number of shelves\n\n6c - 8 = 10\n6c = 10 + 8\n6c = 18\nc = 18 ÷ 6 = 3"
+        },
+        {
+          "front": "Ex 7: Library Shelves 📖\n\nYour bedroom library has shelves that hold 3 books each. You also keep 4 books on your nightstand. In total, you have 19 books.\n\nHow many shelves do you have?",
+          "back": "5 shelves",
+          "hint": "Equation: 3d + 4 = 19\nd = number of shelves\n\n3d + 4 = 19\n3d = 19 - 4\n3d = 15\nd = 15 ÷ 3 = 5"
+        },
+        {
+          "front": "Ex 8: Treasure Hunt 💎\n\nYou find coins in your couch! You discover 5 coins in each cushion. After spending 5 coins on gum and 2 on stickers, you have 8 coins left.\n\nHow many cushions did you search?",
+          "back": "3 cushions",
+          "hint": "Equation: 5e - 5 - 2 = 8\ne = number of cushions\n\n5e - 7 = 8\n5e = 8 + 7\n5e = 15\ne = 15 ÷ 5 = 3"
+        },
+        {
+          "front": "Ex 9: Sticker Album ⭐\n\nYour sticker album is filling up! Each page holds 4 stickers. You have 3 extra stickers that don't fit. Your total collection is 23 stickers.\n\nHow many pages did you fill?",
+          "back": "5 pages",
+          "hint": "Equation: 4f + 3 = 23\nf = number of pages\n\n4f + 3 = 23\n4f = 23 - 3\n4f = 20\nf = 20 ÷ 4 = 5"
+        },
+        {
+          "front": "Ex 10: Video Game Levels 🎯\n\nYou earn 2 points for each level you complete. You started with 8 bonus points. You lost 1 point for falling into a pit. Now you have 17 points.\n\nHow many levels did you complete?",
+          "back": "5 levels",
+          "hint": "Equation: 2g + 8 - 1 = 17\ng = number of levels\n\n2g + 7 = 17\n2g = 17 - 7\n2g = 10\ng = 10 ÷ 2 = 5"
+        }
+      ]
+    },
+    {
       "id": "science-facts",
       "subject": "science",
       "topic": "science-facts",
