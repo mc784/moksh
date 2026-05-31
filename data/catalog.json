@@ -51,6 +51,14 @@
       "icon": "½",
       "order": 2
     },
+    "algebra": {
+      "id": "algebra",
+      "subject": "math",
+      "name": "Algebra",
+      "nameHi": "बीजगणित",
+      "icon": "📐",
+      "order": 3
+    },
     "phonics-blends": {
       "id": "phonics-blends",
       "subject": "english",

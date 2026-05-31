@@ -200,6 +200,94 @@
       ]
     },
     {
+      "id": "math-algebra-word-problems",
+      "subject": "math",
+      "topic": "algebra",
+      "format": "flashcard",
+      "name": "Word Problems",
+      "nameHi": "शब्द समस्याएँ",
+      "icon": "📐",
+      "difficulty": 2,
+      "ageRange": [8, 12],
+      "items": [
+        {
+          "front": "Ex 1: Dog Years 🐕\n\nYour dog is 5 years old. How old is your dog in human years?",
+          "back": "35 human years",
+          "hint": "Equation: H = 7D\n\nD = dog years = 5\nH = 7 × 5 = 35"
+        },
+        {
+          "front": "Ex 2: Plant Growth 🌱\n\nA tomato plant starts at 2 inches tall and grows 1.5 inches per week. After 6 weeks, what is its height?",
+          "back": "11 inches",
+          "hint": "Equation: H = 2 + 1.5W\n\nW = weeks = 6\nH = 2 + (1.5 × 6)\nH = 2 + 9 = 11"
+        },
+        {
+          "front": "Ex 3: Height Growth 📏\n\nYou were 48 inches tall at age 8 and grow 2.5 inches per year. How tall will you be at age 14?",
+          "back": "63 inches",
+          "hint": "Equation: H = 48 + 2.5Y\n(Y = years after age 8)\n\nY = 14 - 8 = 6 years\nH = 48 + (2.5 × 6)\nH = 48 + 15 = 63"
+        },
+        {
+          "front": "Ex 4: Moon Phases 🌙\n\nThe moon completes one cycle of phases every 29.5 days. How many days will pass after 8 complete cycles?",
+          "back": "236 days",
+          "hint": "Equation: D = 29.5C\n\nC = cycles = 8\nD = 29.5 × 8 = 236"
+        },
+        {
+          "front": "Ex 5: Pizza Party 🍕\n\nEach pizza has 8 slices. If you order 4 pizzas for a party, how many total slices will you have?",
+          "back": "32 slices",
+          "hint": "Equation: S = 8P\n\nP = pizzas = 4\nS = 8 × 4 = 32"
+        },
+        {
+          "front": "Ex 6: Coins in Your Pocket 💰\n\nYou have 6 quarters and 12 dimes. What is the total value in cents?",
+          "back": "270 cents ($2.70)",
+          "hint": "Equation: V = 25Q + 10D\n\nQ = quarters = 6\nD = dimes = 12\nV = (25 × 6) + (10 × 12)\nV = 150 + 120 = 270 cents"
+        },
+        {
+          "front": "Ex 7: Road Trip 🚗\n\nYour family drives at 60 mph for 5 hours. How far did you travel?",
+          "back": "300 miles",
+          "hint": "Equation: D = S × T\n\nS = speed = 60 mph\nT = time = 5 hours\nD = 60 × 5 = 300 miles"
+        },
+        {
+          "front": "Ex 8: Phone Battery 📱\n\nYour phone battery drains 5% per hour of use. If you start at 100%, what is your battery level after 8 hours?",
+          "back": "60%",
+          "hint": "Equation: B = 100 - 5H\n\nH = hours = 8\nB = 100 - (5 × 8)\nB = 100 - 40 = 60%"
+        },
+        {
+          "front": "Ex 9: Recipe Scaling 🍳\n\nA recipe for 4 people uses 2 cups of flour. You're making it for 12 people (3× the original). How much flour do you need?",
+          "back": "6 cups",
+          "hint": "Equation: New = Original × Scale\n\nOriginal = 2 cups\nScale = 12 ÷ 4 = 3\nNew = 2 × 3 = 6 cups"
+        },
+        {
+          "front": "Ex 10: Sports Scoring ⚽\n\nIn basketball, 3-pointers are worth 3 points and 2-pointers are worth 2 points. If a player makes 8 three-pointers and 15 two-pointers, how many total points?",
+          "back": "54 points",
+          "hint": "Equation: P = 3X + 2Y\n\nX = three-pointers = 8\nY = two-pointers = 15\nP = (3 × 8) + (2 × 15)\nP = 24 + 30 = 54 points"
+        },
+        {
+          "front": "Ex 11: Temperature Conversion 🌡️\n\nConvert 25°C to Fahrenheit.",
+          "back": "77°F",
+          "hint": "Equation: F = 1.8C + 32\n\nC = 25\nF = (1.8 × 25) + 32\nF = 45 + 32 = 77°F"
+        },
+        {
+          "front": "Ex 12: Lightning Distance ⚡\n\nDuring a thunderstorm, you count 20 seconds between the lightning flash and the thunder sound. How far away is the lightning in miles?",
+          "back": "4 miles",
+          "hint": "Equation: D = S ÷ 5\n\nS = seconds = 20\nD = 20 ÷ 5 = 4 miles\n\n(Sound travels ~1 mile every 5 seconds)"
+        },
+        {
+          "front": "Ex 13: Daylight Hours 🌅\n\nIn June (summer), there are about 15 hours of daylight. In December (winter), there are about 9 hours. What is the difference?",
+          "back": "6 hours",
+          "hint": "Equation: Difference = Summer - Winter\n\nSummer = 15 hours\nWinter = 9 hours\nDifference = 15 - 9 = 6 hours\n\nThis happens because Earth's axis is tilted 23.5°"
+        },
+        {
+          "front": "Ex 14: Calories Burned 🏃\n\nRunning burns about 8 calories per minute. If you run for 45 minutes, how many calories do you burn?",
+          "back": "360 calories",
+          "hint": "Equation: C = 8M\n\nM = minutes = 45\nC = 8 × 45 = 360 calories"
+        },
+        {
+          "front": "Ex 15: Musical Frequencies 🎵\n\nThe frequency of a musical note doubles when you go up one octave. Middle C is 262 Hz. What is the frequency of C two octaves higher?",
+          "back": "1048 Hz",
+          "hint": "Equation: F = 262 × 2^Octaves\n\nOctaves = 2\nF = 262 × 2²\nF = 262 × 4 = 1048 Hz"
+        }
+      ]
+    },
+    {
       "id": "science-facts",
       "subject": "science",
       "topic": "science-facts",

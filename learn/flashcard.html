@@ -177,6 +177,114 @@
       opacity: 0.5;
     }
 
+    /* Hint Button */
+    .hint-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+
+    .hint-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text);
+    }
+
+    .hint-btn.visible {
+      display: flex;
+    }
+
+    /* Hint Panel */
+    .hint-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, var(--surface2), var(--surface));
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px 20px 0 0;
+      padding: 1.5rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 50;
+      max-height: 45vh;
+      overflow-y: auto;
+    }
+
+    .hint-panel.visible {
+      transform: translateY(0);
+    }
+
+    .hint-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .hint-panel-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hint-panel-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .hint-panel-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text);
+    }
+
+    .hint-panel-content {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-line;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    }
+
+    .hint-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 45;
+    }
+
+    .hint-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     /* Transport Controls */
     .transport {
       display: flex;
@@ -396,6 +504,7 @@
     <div class="flashcard-wrapper">
       <div class="flashcard" id="flashcard" onclick="flipCard()">
         <div class="card-face card-front">
+          <button class="hint-btn" id="hintBtn" onclick="event.stopPropagation(); showHint()">💡</button>
           <div class="card-content" id="cardFront">Loading...</div>
           <div class="tap-hint">Tap to flip</div>
         </div>
@@ -429,6 +538,16 @@
     <button class="complete-btn" onclick="goBack()">Done</button>
   </div>
 
+  <!-- Hint Panel -->
+  <div class="hint-overlay" id="hintOverlay" onclick="hideHint()"></div>
+  <div class="hint-panel" id="hintPanel">
+    <div class="hint-panel-header">
+      <div class="hint-panel-title">💡 Hint</div>
+      <button class="hint-panel-close" onclick="hideHint()">×</button>
+    </div>
+    <div class="hint-panel-content" id="hintContent"></div>
+  </div>
+
   <canvas id="confetti"></canvas>
 
   <script type="module" src="../js/firebase-config.js"></script>
@@ -444,6 +563,7 @@
     let total = 0;
     let isFlipped = false;
     let contentData = null;
+    let currentHint = null;
 
     async function init() {
       if (window.MokshFirebase) {
@@ -491,10 +611,27 @@
       document.getElementById('cardBack').textContent = card.back;
       document.getElementById('cardHint').textContent = card.highlight ? `Sound: ${card.highlight}` : '';
 
+      // Handle hint button visibility
+      currentHint = card.hint || null;
+      document.getElementById('hintBtn').classList.toggle('visible', !!currentHint);
+      hideHint();
+
       isFlipped = false;
       document.getElementById('flashcard').classList.remove('flipped');
       setButtonsActive(false);
       updateProgress();
+    }
+
+    function showHint() {
+      if (!currentHint) return;
+      document.getElementById('hintContent').textContent = currentHint;
+      document.getElementById('hintPanel').classList.add('visible');
+      document.getElementById('hintOverlay').classList.add('visible');
+    }
+
+    function hideHint() {
+      document.getElementById('hintPanel').classList.remove('visible');
+      document.getElementById('hintOverlay').classList.remove('visible');
     }
 
     function flipCard() {
@@ -527,6 +664,12 @@
         document.getElementById('cardFront').textContent = card.front;
         document.getElementById('cardBack').textContent = card.back;
         document.getElementById('cardHint').textContent = card.highlight ? `Sound: ${card.highlight}` : '';
+
+        // Handle hint button visibility for next card
+        currentHint = card.hint || null;
+        document.getElementById('hintBtn').classList.toggle('visible', !!currentHint);
+        hideHint();
+
         updateProgress();
       }, 350);
     }
@@ -614,7 +757,15 @@
     }
 
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') goBack();
+      // Close hint panel first if open
+      if (e.key === 'Escape') {
+        if (document.getElementById('hintPanel').classList.contains('visible')) {
+          hideHint();
+          return;
+        }
+        goBack();
+      }
+      if (e.key === 'h' && currentHint && !isFlipped) showHint();
       if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
       if (e.key === 'ArrowLeft' && isFlipped) answer(false);
       if (e.key === 'ArrowRight' && isFlipped) answer(true);
